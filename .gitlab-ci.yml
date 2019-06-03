@@ -1,0 +1,32 @@
+# Official language image. Look for the different tagged releases at:
+# https://hub.docker.com/r/crystallang/crystal/
+image: "crystallang/crystal:latest"
+
+# Cache shards in between builds
+cache:
+  paths:
+    - lib
+    - bin
+
+before_script:
+  - crystal -v # Print out Crystal version for debugging
+  - shards
+
+spec:
+  script:
+  - crystal spec
+  - bin/ameba
+  - crystal tool format --check
+
+pages:
+  stage: deploy
+  dependencies:
+    - spec
+  script:
+    - crystal docs
+    - mv docs/ public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

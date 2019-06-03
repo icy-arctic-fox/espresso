@@ -1,0 +1,20 @@
+name: espresso
+version: 0.1.0
+
+authors:
+  - Michael Miller <icy.arctic.fox@gmail.com>
+
+crystal: 0.28.0
+
+license: MIT
+
+development_dependencies:
+  spectator:
+    gitlab: arctic-fox/spectator
+  ameba:
+    github: veelenga/ameba
+    version: ~> 0.9
+
+dependencies:
+  glfw.cr:
+    gitlab: arctic-fox/glfw.cr
