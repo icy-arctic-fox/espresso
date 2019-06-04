@@ -18,3 +18,7 @@ development_dependencies:
 dependencies:
   glfw.cr:
     gitlab: arctic-fox/glfw.cr
+    version: ~> 3.3
+
+libraries:
+  glfw3: ~> 3.3
