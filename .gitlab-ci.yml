@@ -1,24 +1,38 @@
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/crystallang/crystal/
-image: "crystallang/crystal:latest"
-
-# Cache shards in between builds
-cache:
-  paths:
-    - lib
-    - bin
+variables:
+  GLFW_IMAGE: $CI_REGISTRY_IMAGE/glfw:$CI_COMMIT_REF_NAME
 
 before_script:
-  - crystal -v # Print out Crystal version for debugging
-  - shards
+  - docker info
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+docker-image:
+  image: docker:stable
+  stage: build
+  services:
+    - docker:dind
+  script:
+    - docker build --pull -t $GLFW_IMAGE .
+    - docker push $GLFW_IMAGE
 
 spec:
+  image: $GLFW_IMAGE
+  stage: test
+  dependencies:
+    - docker-image
+  before_script:
+    - crystal -v
+    - shards
   script:
-  - crystal spec
-  - bin/ameba
-  - crystal tool format --check
+    - crystal spec
+    - bin/ameba
+    - crystal tool format --check
+  cache:
+    paths:
+      - lib
+      - bin
 
 pages:
+  image: crystallang/crystal:latest
   stage: deploy
   dependencies:
     - spec
