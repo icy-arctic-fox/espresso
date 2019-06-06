@@ -34,6 +34,9 @@ pages:
   stage: deploy
   dependencies:
     - spec
+  before_script:
+    - crystal -v
+    - shards
   script:
     - crystal docs
     - mv docs/ public/
