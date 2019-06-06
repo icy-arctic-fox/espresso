@@ -11,6 +11,7 @@ docker-image:
   services:
     - docker:dind
   script:
+    - docker pull $GLFW_IMAGE || true
     - docker build --pull -t $GLFW_IMAGE .
     - docker push $GLFW_IMAGE
 
