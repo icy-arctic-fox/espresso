@@ -14,6 +14,7 @@ RUN apt-get update -y && \
   libgmp-dev \
   libreadline-dev \
   libz-dev \
+  libevent-dev \
   xorg-dev \
   xvfb \
   fluxbox
