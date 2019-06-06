@@ -11,9 +11,6 @@ license: MIT
 development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
-  ameba:
-    github: veelenga/ameba
-    version: ~> 0.9
 
 dependencies:
   glfw:
