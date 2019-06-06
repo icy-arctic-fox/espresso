@@ -5,6 +5,27 @@ Spectator.describe Espresso do
   let(minor) { 3 }
   let(patch) { 0 }
 
+  describe "#init" do
+    it "doesn't raise" do
+      expect { Espresso.init }.to_not raise_error
+    end
+
+    it "doesn't raise on re-initialization" do
+      Espresso.init
+      expect { Espresso.init }.to_not raise_error
+    end
+  end
+
+  describe "#run" do
+    it "doesn't raise" do
+      expect { Espresso.run { } }.to_not raise_error
+    end
+
+    it "doesn't raise on re-initialization" do
+      expect { Espresso.run { Espresso.run { } } }.to_not raise_error
+    end
+  end
+
   describe "#version" do
     subject { Espresso.version }
 

@@ -1,12 +1,63 @@
 require "glfw"
 require "semantic_version"
+require "./espresso/**"
 
 # Lightweight wrapper around GLFW for Crystal.
 module Espresso
   extend self
+  include ErrorHandling
 
   # Current version of the shard.
   VERSION = "0.1.0"
+
+  # Prepares GLFW so that it can be used.
+  # This method must be called prior
+  # to any features that require initialization.
+  # If the initialization fails, a `GLFWError` will be raised.
+  #
+  # Before exiting the program, and after GLFW is no longer needed,
+  # the `#terminate` method must be called.
+  # It is recommended to use `#run` instead of this method.
+  #
+  # Calling this method when GLFW is already initialized does nothing.
+  #
+  # A `PlatformError` will be raised if GLFW couldn't be initialized.
+  def init : Nil
+    expect_truthy { LibGLFW.init }
+  end
+
+  # Cleans up resources used by GLFW and and changes it made to the system.
+  # This method must be called after GLFW is no longer used
+  # and before the program exits.
+  # Once GLFW is terminated, it must be reinitialized before using it again.
+  #
+  # Calling this method when GLFW is already terminated does nothing.
+  def terminate : Nil
+    LibGLFW.terminate
+  end
+
+  # Initializes GLFW and yields for the duration it is usable.
+  # GLFW is automatically terminated after the block completes,
+  # even if an uncaught exception is raised.
+  #
+  # The value of the block is returned by this method.
+  #
+  # Calling this method when GLFW is already initialized does nothing.
+  #
+  # A `PlatformError` will be raised if GLFW couldn't be initialized.
+  #
+  # Usage:
+  # ```
+  # Espresso.run do
+  #   # Use GLFW here.
+  # end
+  # ```
+  def run
+    init
+    yield
+  ensure
+    terminate
+  end
 
   # Version of GLFW that Espresso was compiled against.
   # This should match `#runtime_version` to have consistent/expected behavior.
