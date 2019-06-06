@@ -37,7 +37,9 @@ RUN git clone -b $GLFW_VERSION https://github.com/glfw/glfw.git && \
 RUN groupadd -r build && \
   useradd --no-log-init -m -r -g build build
 
+COPY entrypoint.sh /entrypoint.sh
+
 USER build
 WORKDIR /home/build
-ENTRYPOINT ["/bin/sh", "-c", "/usr/bin/xvfb-run -a -s '-screen 0 1280x720x24' $@", ""]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["fluxbox"]
