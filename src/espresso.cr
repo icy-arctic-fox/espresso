@@ -32,8 +32,10 @@ module Espresso
   # Once GLFW is terminated, it must be reinitialized before using it again.
   #
   # Calling this method when GLFW is already terminated does nothing.
+  #
+  # A `PlatformError` can be raised if GLFW couldn't be terminated.
   def terminate : Nil
-    LibGLFW.terminate
+    checked { LibGLFW.terminate }
   end
 
   # Initializes GLFW and yields for the duration it is usable.
