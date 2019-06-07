@@ -26,7 +26,7 @@ module Espresso
     # Pass a block to this method that calls *one* GLFW method.
     # The value of the block will be returned if no error occurred.
     # Otherwise, the error will be translated and raised.
-    def checked
+    private def checked
       yield.tap { check_error }
     end
 
@@ -36,7 +36,7 @@ module Espresso
     # Pass a block to this method that calls *one* GLFW method.
     # The value of the block will be returned if no error occurred.
     # Otherwise, an error will be raised.
-    def expect_truthy
+    private def expect_truthy
       yield.tap do |result|
         check_error if !result || result == LibGLFW::Bool::False
       end
