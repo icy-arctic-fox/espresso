@@ -36,6 +36,9 @@ module Espresso
     # Pass a block to this method that calls *one* GLFW method.
     # The value of the block will be returned if no error occurred.
     # Otherwise, an error will be raised.
+    #
+    # An exception will be raised only if an error occurred.
+    # The error check will only happen if the block returns non-truthy.
     private def expect_truthy
       yield.tap do |result|
         check_error if !result || result == LibGLFW::Bool::False
