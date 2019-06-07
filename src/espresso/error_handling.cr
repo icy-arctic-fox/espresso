@@ -13,6 +13,8 @@ require "./no_window_context_error"
 module Espresso
   # Mix-in for handling errors from GLFW.
   private module ErrorHandling
+    extend self
+
     # Checks if an error occurred in GLFW
     # and raises an exception if one did.
     private def check_error
@@ -30,6 +32,11 @@ module Espresso
       yield.tap { check_error }
     end
 
+    # Same as `#checked`, but for static invocations.
+    def self.static_checked(&block : -> _)
+      checked(&block)
+    end
+
     # Expects a GLFW function to return a truthy value.
     # The return value of the method is checked
     # to be not false, nil, or integer false (zero).
@@ -43,6 +50,11 @@ module Espresso
       yield.tap do |result|
         check_error if !result || result == LibGLFW::Bool::False
       end
+    end
+
+    # Same as `#expect_truthy`, but for static invocations.
+    def self.static_expect_truthy(&block : -> _)
+      expect_truthy(&block)
     end
 
     # Creates an error from the given code a description.
