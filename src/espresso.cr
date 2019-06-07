@@ -6,6 +6,7 @@ require "./espresso/**"
 module Espresso
   extend self
   include ErrorHandling
+  include BoolConversion
 
   # Current version of the shard.
   VERSION = "0.1.0"
@@ -19,11 +20,39 @@ module Espresso
   # the `#terminate` method must be called.
   # It is recommended to use `#run` instead of this method.
   #
+  # Arguments to this method are initialization hints.
+  # When unspecified (nil), the hints will use their default value.
+  # Specify true or false for the hints as needed.
+  #
+  # *joystick_hat_buttons* specifies whether to also expose joystick hats as buttons,
+  # for compatibility with earlier versions of GLFW that did not have this feature.
+  #
+  # macOS specific hints:
+  #
+  # *cocoa_chdir_resources* pecifies whether to set the current directory
+  # to the application to the Contents/Resources subdirectory of the application's bundle, if present.
+  #
+  # *cocoa_menubar* specifies whether to create a basic menu bar, either from a nib or manually,
+  # when the first window is created, which is when AppKit is initialized.
+  #
   # Calling this method when GLFW is already initialized does nothing.
   #
   # A `PlatformError` will be raised if GLFW couldn't be initialized.
-  def init : Nil
+  def init(joystick_hat_buttons : Bool? = nil,
+           cocoa_chdir_resources : Bool? = nil,
+           cocoa_menubar : Bool? = nil) : Nil
+    init_hint(LibGLFW::InitHint::JoystickHatButtons, joystick_hat_buttons) unless joystick_hat_buttons.nil?
+    init_hint(LibGLFW::InitHint::CocoaChdirResources, cocoa_chdir_resources) unless cocoa_chdir_resources.nil?
+    init_hint(LibGLFW::InitHint::CocoaMenubar, cocoa_menubar) unless cocoa_menubar.nil?
     expect_truthy { LibGLFW.init }
+  end
+
+  # Utility method for setting an initialization hint.
+  # Converts *flag* from a boolean to an GLFW boolean integer
+  # and sets the corresponding *hint*.
+  private def init_hint(hint, flag)
+    value = bool_to_int(flag)
+    LibGLFW.init_hint(hint, value)
   end
 
   # Cleans up resources used by GLFW and and changes it made to the system.
@@ -42,6 +71,11 @@ module Espresso
   # GLFW is automatically terminated after the block completes,
   # even if an uncaught exception is raised.
   #
+  # Arguments to this method are initialization hints.
+  # When unspecified (nil), the hints will use their default value.
+  # Specify true or false for the hints as needed.
+  # See `#init` for details on what these hints do.
+  #
   # The value of the block is returned by this method.
   #
   # Calling this method when GLFW is already initialized does nothing.
@@ -54,8 +88,10 @@ module Espresso
   #   # Use GLFW here.
   # end
   # ```
-  def run
-    init
+  def run(joystick_hat_buttons : Bool? = nil,
+          cocoa_chdir_resources : Bool? = nil,
+          cocoa_menubar : Bool? = nil)
+    init(joystick_hat_buttons, cocoa_chdir_resources, cocoa_menubar)
     yield
   ensure
     terminate
