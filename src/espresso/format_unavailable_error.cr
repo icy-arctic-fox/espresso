@@ -15,7 +15,7 @@ module Espresso
   # Otherwise, inform the user that their machine does not match your requirements.
   #
   # If emitted when querying the clipboard,
-  # ignore the error or report it to the user, as appropriate. 
+  # ignore the error or report it to the user, as appropriate.
   class FormatUnavailableError < GLFWError
     # Underlying value that represents the error type.
     def code

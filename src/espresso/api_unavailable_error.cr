@@ -13,7 +13,7 @@ module Espresso
   # - macOS does not provide OpenGL ES at all.
   # - The Mesa EGL, OpenGL and OpenGL ES libraries do not interface
   #   with the Nvidia binary driver.
-  # - Older graphics drivers do not support Vulkan. 
+  # - Older graphics drivers do not support Vulkan.
   class APIUnavailableError < GLFWError
     # Underlying value that represents the error type.
     def code
