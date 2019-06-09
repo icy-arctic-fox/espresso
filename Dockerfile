@@ -16,6 +16,7 @@ RUN apt-get update -y && \
   libz-dev \
   libevent-dev \
   xorg-dev \
+  x11-xserver-utils \
   xvfb \
   fluxbox
 
