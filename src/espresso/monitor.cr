@@ -1,4 +1,8 @@
+require "./bounds"
 require "./error_handling"
+require "./position"
+require "./scale"
+require "./size"
 
 module Espresso
   # Reference to a display monitor or screen and information about it.
@@ -44,20 +48,62 @@ module Espresso
       slice.map { |pointer| Monitor.new(pointer) }
     end
 
+    # Position, in screen coordinates, of the upper-left corner of the monitor.
+    # This is the position of the monitor on the virtual desktop.
+    #
+    # Can raise a `PlatformError`.
     def position
-      raise NotImplementedError.new("#position")
+      checked do
+        LibGLFW.get_monitor_pos(@pointer, out x, out y)
+        Position.new(x, y)
+      end
     end
 
+    # Area of a monitor not occupied by global task bars or menu bars.
+    # This is specified in screen coordinates.
+    #
+    # Can raise a `PlatformError`.
     def workarea
-      raise NotImplementedError.new("#workarea")
+      checked do
+        LibGLFW.get_monitor_workarea(@pointer, out x, out y, out width, out height)
+        Bounds.new(x, y, width, height)
+      end
     end
 
+    # Physical size of a monitor in millimetres, or an estimation of it.
+    #
+    # While this can be used to calculate the raw DPI of a monitor, this is often not useful.
+    # Instead use `#content_scale` and `Window#content_scale` to scale your content.
+    #
+    # Some systems do not provide accurate monitor size information,
+    # either because the monitor EDID data is incorrect
+    # or because the driver does not report it accurately.
+    # On Windows, the physical size is calculated from the current resolution
+    # and system DPI instead of querying the monitor EDID data.
     def physical_size
-      raise NotImplementedError.new("#physical_size")
+      checked do
+        LibGLFW.get_monitor_physical_size(@pointer, out width, out height)
+        Size.new(width, height)
+      end
     end
 
+    # Ratio between the current DPI and the platform's default DPI.
+    # This is especially important for text and any UI elements.
+    # If the pixel dimensions of your UI scaled by this look appropriate on your machine
+    # then it should appear at a reasonable size on other machines regardless of their DPI and scaling settings.
+    # This relies on the system DPI and scaling settings being somewhat correct.
+    #
+    # The content scale may depend on both the monitor resolution and pixel density and on user settings.
+    # It may be very different from the raw DPI calculated from the physical size and current resolution.
+    #
+    # Can raise a `PlatformError`.
+    #
+    # See also: `Window#content_scale`
     def content_scale
-      raise NotImplementedError.new("#content_scale")
+      checked do
+        LibGLFW.get_monitor_content_scale(@pointer, out x, out y)
+        Scale.new(x, y)
+      end
     end
 
     # Retrieves the human-readable name of the monitor.
