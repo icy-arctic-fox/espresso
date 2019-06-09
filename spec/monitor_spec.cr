@@ -7,8 +7,8 @@ Spectator.describe Espresso::Monitor do
   let(monitors) { xrandr[:monitors].select(&.connected) } # GLFW only reports connected monitors.
 
   # Monitor objects to inspect.
-  subject(monitor) { described_class.primary }       # SUT
-  let(primary) { monitors.find(&.primary).not_nil! } # Source of truth
+  subject(monitor) { described_class.primary }                       # SUT
+  let(primary) { monitors.find(monitors.first, &.primary).not_nil! } # Source of truth
 
   around_each do |example|
     Espresso.run { example.call }
