@@ -39,7 +39,7 @@ module Espresso
     # when a monitor is connected or disconnected.
     def self.all
       count = 0
-      pointers = expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
+      pointers = ErrorHandling.static_expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
       return [] of Monitor unless pointers # nil is returned if there's no monitors.
 
       # Use a slice to safely traverse the C-style array.
