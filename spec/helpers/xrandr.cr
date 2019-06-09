@@ -12,14 +12,9 @@ module XRandR
 
   # Retrieve display information.
   def info
-    lines = `xrandr`.lines
+    lines = `xrandr 2>/dev/null`.lines
     raise "No output from xrandr - is it installed?" if lines.empty?
 
-    # Remove warning/error lines.
-    while lines.first.starts_with?("xrandr:")
-      lines.shift
-    end
-    
     screen_info = lines.shift
     m = screen_info.match(/^Screen \d+: minimum \d+ x \d+, current (\d+) x (\d+), maximum \d+ x \d+/)
     raise "Unexpected output from xrandr" unless m
