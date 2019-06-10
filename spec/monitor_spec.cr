@@ -65,12 +65,21 @@ Spectator.describe Espresso::Monitor do
   end
 
   describe "#name" do
-    subject { primary.name }
+    subject { monitor.name }
 
     it "has the correct value" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
 
       is_expected.to eq(primary.name)
+    end
+  end
+
+  describe "#video_modes" do
+    subject { monitor.video_modes }
+
+    it "has the expected video modes" do
+      return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
+      expect(monitor.video_modes.size).to eq(primary.video_modes.size)
     end
   end
 end

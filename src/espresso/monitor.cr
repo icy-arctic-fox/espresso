@@ -3,6 +3,7 @@ require "./error_handling"
 require "./position"
 require "./scale"
 require "./size"
+require "./video_mode"
 
 module Espresso
   # Reference to a display monitor or screen and information about it.
@@ -126,12 +127,28 @@ module Espresso
       raise NotImplementedError.new("#user_pointer=")
     end
 
+    # List of all video modes supported by the monitor.
+    # The returned array is sorted in ascending order,
+    # first by color bit depth (the sum of all channel depths)
+    # and then by resolution area (the product of width and height).
+    #
+    # Can raise a `PlatformError`.
     def video_modes
-      raise NotImplementedError.new("#video_modes")
+      count = 0
+      video_modes_pointer = expect_truthy { LibGLFW.get_video_modes(@pointer, pointerof(count)) }
+      video_modes = Slice.new(video_modes_pointer, count, read_only: true)
+      video_modes.map { |video_mode| VideoMode.new(video_mode) }
     end
 
-    def primary_video_mode
-      raise NotImplementedError.new("#primary_video_mode")
+    # Retrieves the currently active video mode for the monitor.
+    #
+    # If there is a full-screen window, and it isn't iconified,
+    # the video mode returned will match the window's video mode.
+    #
+    # Can raise a `PlatformError`.
+    def current_video_mode
+      video_mode_pointer = expect_truthy { LibGLFW.get_video_mode(@pointer) }
+      VideoMode.new(video_mode_pointer.value)
     end
 
     def gamma=(gamma)
