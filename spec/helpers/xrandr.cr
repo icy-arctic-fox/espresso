@@ -1,6 +1,6 @@
 record Screen, width : Int32, height : Int32
 
-record VideoMode, width : Int32, height : Int32, rate : Float32, current : Bool
+record VideoMode, width : Int32, height : Int32, rate : Int32, current : Bool
 
 record Monitor, width : Int32, height : Int32, x : Int32, y : Int32,
   width_mm : Int32, height_mm : Int32, primary : Bool, name : String,
@@ -46,10 +46,13 @@ module XRandR
         width, height = resolution.split('x', 2)
         rates.each do |rate|
           current = rate.includes?('*')
-          r = rate.match(/\d+\.\d+/).not_nil![0].to_f32
-          modes << VideoMode.new(width.to_i, height.to_i, r, current)
+          if (m = rate.match(/\d+\.\d+/))
+            r = m[0].to_f32.round.to_i
+            modes << VideoMode.new(width.to_i, height.to_i, r, current)
+          end
         end
       end
+      modes.uniq!
     end
   end
 

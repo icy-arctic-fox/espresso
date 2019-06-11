@@ -79,7 +79,7 @@ Spectator.describe Espresso::Monitor do
 
     it "has the expected video modes" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
-      expect(monitor.video_modes.size).to eq(primary.video_modes.size)
+      expect(monitor.video_modes.size).to be_ge(primary.video_modes.size)
     end
   end
 end
