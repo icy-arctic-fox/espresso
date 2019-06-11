@@ -94,9 +94,19 @@ Spectator.describe Espresso::Monitor do
     expect(unboxed.object_id).to eq(object.object_id)
   end
 
+  let(gamma_supported?) do
+    if (monitor = Espresso::Monitor.primary?)
+      begin
+        monitor.gamma = 1.0
+      rescue Espresso::PlatformError
+        false
+      end
+    end
+  end
+
   describe "#gamma=" do
     it "doesn't raise on valid gamma values" do
-      return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
+      return unless gamma_supported?
 
       expect { monitor.gamma = 2.2 }.to_not raise_error
     end
@@ -107,12 +117,12 @@ Spectator.describe Espresso::Monitor do
   end
 
   it "can get and set gamma ramps" do
-    return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
+    return unless gamma_supported?
 
     original_ramp = Espresso::GammaRamp.new
     monitor.gamma_ramp = original_ramp
     retrieved_ramp = monitor.gamma_ramp
     expect(retrieved_ramp).to have_attributes(size: original_ramp.size,
-    red: original_ramp.red, green: original_ramp.green, blue: original_ramp.blue)
+      red: original_ramp.red, green: original_ramp.green, blue: original_ramp.blue)
   end
 end
