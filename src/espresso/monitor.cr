@@ -1,5 +1,6 @@
 require "./bounds"
 require "./error_handling"
+require "./invalid_value_error"
 require "./position"
 require "./scale"
 require "./size"
@@ -162,8 +163,21 @@ module Espresso
       VideoMode.new(video_mode_pointer.value)
     end
 
+    # Adjusts the gamma ramp for the monitor.
+    # The *gamma* argument is the desired exponent.
+    # GLFW will compute a normal gamma ramp and apply it.
+    #
+    # The software controlled gamma ramp is applied in addition to the hardware gamma correction,
+    # which today is usually an approximation of sRGB gamma.
+    # This means that setting a perfectly linear ramp, or gamma 1.0,
+    # will produce the default (usually sRGB-like) behavior.
+    #
+    # Can raise a `PlatformError`.
+    # Raises an `ArgumentError` if the *gamma* value is invalid.
     def gamma=(gamma)
-      raise NotImplementedError.new("#gamma=")
+      checked { LibGLFW.set_gamma(@pointer, gamma) }
+    rescue e : InvalidValueError
+      raise ArgumentError.new("Invalid gamma value")
     end
 
     def gamma_ramp

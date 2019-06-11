@@ -93,4 +93,16 @@ Spectator.describe Espresso::Monitor do
     unboxed = Box(typeof(object)).unbox(monitor.user_pointer)
     expect(unboxed.object_id).to eq(object.object_id)
   end
+
+  describe "#gamma=" do
+    it "doesn't raise on valid gamma values" do
+      return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
+
+      expect { monitor.gamma = 2.2 }.to_not raise_error
+    end
+
+    it "raises on invalid gamma values" do
+      expect { monitor.gamma = -1.0 }.to raise_error(ArgumentError, /gamma/)
+    end
+  end
 end
