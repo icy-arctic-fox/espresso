@@ -45,7 +45,7 @@ Spectator.describe Espresso::Monitor do
   describe "#size" do
     subject { monitor.size }
 
-    pending "has the correct values" do
+    it "has the correct values" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
 
       expect(subject.width).to eq(primary.width)

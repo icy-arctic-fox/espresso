@@ -61,6 +61,13 @@ module Espresso
       end
     end
 
+    # Size, in screen coordinates, of the monitor.
+    #
+    # Can raise a `PlatformError`.
+    def size
+      current_video_mode.size
+    end
+
     # Area of a monitor not occupied by global task bars or menu bars.
     # This is specified in screen coordinates.
     #
