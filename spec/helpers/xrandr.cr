@@ -43,6 +43,8 @@ module XRandR
       lines.each do |line|
         rates = line.strip.split
         resolution = rates.shift
+        next unless resolution.includes?('x')
+
         width, height = resolution.split('x', 2)
         rates.each do |rate|
           current = rate.includes?('*')
