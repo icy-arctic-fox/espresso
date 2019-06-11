@@ -1,5 +1,6 @@
 require "./bounds"
 require "./error_handling"
+require "./gamma_ramp"
 require "./invalid_value_error"
 require "./position"
 require "./scale"
@@ -187,12 +188,38 @@ module Espresso
       raise ArgumentError.new("Invalid gamma value")
     end
 
+    # Retrieves the current gamma ramp for the monitor.
+    #
+    # On Wayland, gamma handling is a priviledged protocol,
+    # and this method will always raise `PlatformError`.
+    #
+    # Can raise a `PlatformError`.
     def gamma_ramp
-      raise NotImplementedError.new("#gamma_ramp")
+      ramp_pointer = expect_truthy { LibGLFW.get_gamma_ramp(@pointer) }
+      GammaRamp.new(ramp_pointer)
     end
 
+    # Sets the gamma ramp to be used for the monitor.
+    # The original gamma ramp for that monitor is saved by GLFW
+    # the first time this function is called and is restored
+    # when GLFW is terminated (`Espresso.terminate`).
+    #
+    # The software controlled gamma ramp is applied in addition to the hardware gamma correction,
+    # which today is usually an approximation of sRGB gamma.
+    # This means that setting a perfectly linear ramp, or gamma 1.0,
+    # will produce the default (usually sRGB-like) behavior.
+    #
+    # For gamma correct rendering with OpenGL or OpenGL ES, see the GLFW_SRGB_CAPABLE hint.
+    #
+    # The size of the specified gamma ramp should match the size of the current ramp for this monitor.
+    # On Windows, the gamma ramp size must be 256.
+    # On Wayland, gamma handling is a priviledged protocol,
+    # and this method will always raise `PlatformError`.
+    #
+    # Can raise a `PlatformError`.
     def gamma_ramp=(ramp)
-      raise NotImplementedError.new("#gamma_ramp=")
+      glfw_ramp = ramp.to_unsafe
+      checked { LibGLFW.set_gamma_ramp(@pointer, pointerof(glfw_ramp)) }
     end
   end
 end
