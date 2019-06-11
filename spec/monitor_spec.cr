@@ -82,4 +82,15 @@ Spectator.describe Espresso::Monitor do
       expect(monitor.video_modes.size).to be_ge(primary.video_modes.size)
     end
   end
+
+  it "can get and store user pointers" do
+    return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
+
+    object = "foobar"
+    pointer = Box.box(object)
+    monitor.user_pointer = pointer
+    expect(monitor.user_pointer).to eq(pointer)
+    unboxed = Box(typeof(object)).unbox(monitor.user_pointer)
+    expect(unboxed.object_id).to eq(object.object_id)
+  end
 end

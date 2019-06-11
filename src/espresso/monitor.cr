@@ -119,12 +119,23 @@ module Espresso
       String.new(c_string)
     end
 
+    # Retrieves the current value of the user-defined pointer for this monitor.
+    # This can be used for any purpose you need and will not be modified by GLFW.
+    # The value will be kept until the monitor is disconnected or until the library is terminated.
+    # The initial value is nil.
+    #
+    # This method may be called from the monitor connect/disconnect event,
+    # even if the monitor is being disconnected.
     def user_pointer
-      raise NotImplementedError.new("#user_pointer")
+      checked { LibGLFW.get_monitor_user_pointer(@pointer) }
     end
 
+    # Updates the value of the user-defined pointer for this monitor.
+    # This can be used for any purpose you need and will not be modified by GLFW.
+    # The value will be kept until the monitor is disconnected or until the library is terminated.
+    # The initial value is nil.
     def user_pointer=(pointer)
-      raise NotImplementedError.new("#user_pointer=")
+      checked { LibGLFW.set_monitor_user_pointer(@pointer, pointer) }
     end
 
     # List of all video modes supported by the monitor.
