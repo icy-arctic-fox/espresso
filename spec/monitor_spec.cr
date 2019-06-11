@@ -37,8 +37,7 @@ Spectator.describe Espresso::Monitor do
     it "has the correct values" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
 
-      expect(subject.x).to eq(primary.x)
-      expect(subject.y).to eq(primary.y)
+      is_expected.to have_attributes(x: primary.x, y: primary.y)
     end
   end
 
@@ -48,8 +47,7 @@ Spectator.describe Espresso::Monitor do
     it "has the correct values" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
 
-      expect(subject.width).to eq(primary.width)
-      expect(subject.height).to eq(primary.height)
+      is_expected.to have_attributes(width: primary.width, height: primary.height)
     end
   end
 
@@ -59,8 +57,7 @@ Spectator.describe Espresso::Monitor do
     it "has the correct values" do
       return unless Espresso::Monitor.primary? # Skip test if there's no primary monitor.
 
-      expect(subject.width).to eq(primary.width_mm)
-      expect(subject.height).to eq(primary.height_mm)
+      is_expected.to have_attributes(width: primary.width_mm, height: primary.height_mm)
     end
   end
 
