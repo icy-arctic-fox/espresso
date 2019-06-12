@@ -17,15 +17,15 @@ Spectator.describe Espresso::Size do
     subject { size.to_s }
 
     it "is formatted correctly" do
-      is_expected.to match(/^\(\d+, \d+\)$/)
+      is_expected.to match(/^\d+x\d+$/)
     end
 
     it "contains the width" do
-      is_expected.to contain("#{width}, ")
+      is_expected.to contain("#{width}x")
     end
 
     it "contains the height" do
-      is_expected.to contain(", #{height}")
+      is_expected.to contain("x#{height}")
     end
   end
 end
