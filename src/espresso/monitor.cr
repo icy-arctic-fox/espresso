@@ -220,6 +220,13 @@ module Espresso
       checked { LibGLFW.set_gamma_ramp(@pointer, pointerof(glfw_ramp)) }
     end
 
+    # String representation of the monitor.
+    def to_s(io)
+      io << "Monitor("
+      io << name
+      io << ')'
+    end
+
     # Stores active listeners for connect and disconnect events.
     # GLFW has only one callback, which is when any monitor connects or disconnects.
     # But it is split here for end-user convenience.

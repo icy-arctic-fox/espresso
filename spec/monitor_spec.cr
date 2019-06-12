@@ -122,4 +122,12 @@ Spectator.describe Espresso::Monitor do
     expect(retrieved_ramp).to have_attributes(size: original_ramp.size,
       red: original_ramp.red, green: original_ramp.green, blue: original_ramp.blue)
   end
+
+  describe "#to_s" do
+    subject { monitor.to_s }
+
+    it "contains the name" do
+      is_expected.to contain(monitor.name)
+    end
+  end
 end
