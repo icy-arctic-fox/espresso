@@ -33,7 +33,7 @@ module Espresso
     end
 
     # Same as `#checked`, but for static invocations.
-    def self.static_checked(&block : -> _)
+    protected def self.static_checked(&block : -> _)
       checked(&block)
     end
 
@@ -53,7 +53,7 @@ module Espresso
     end
 
     # Same as `#expect_truthy`, but for static invocations.
-    def self.static_expect_truthy(&block : -> _)
+    protected def self.static_expect_truthy(&block : -> _)
       expect_truthy(&block)
     end
 
