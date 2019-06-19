@@ -227,6 +227,11 @@ module Espresso
       io << ')'
     end
 
+    # Returns the underlying GLFW monitor pointer.
+    def to_unsafe
+      @pointer
+    end
+
     # Stores active listeners for connect and disconnect events.
     # GLFW has only one callback, which is when any monitor connects or disconnects.
     # But it is split here for end-user convenience.

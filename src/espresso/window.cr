@@ -230,5 +230,10 @@ module Espresso
       end
       Window.new(pointer)
     end
+
+    # Returns the underlying GLFW window and context pointer.
+    def to_unsafe
+      @pointer
+    end
   end
 end
