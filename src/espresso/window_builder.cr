@@ -90,6 +90,7 @@ module Espresso
       # The apply all of the specified hints.
       reset_hints
       @hints.each(&.apply)
+      @string_hints.each(&.apply)
 
       # Create the window.
       Window.new(width, height, title)
