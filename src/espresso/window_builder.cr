@@ -21,7 +21,9 @@ module Espresso
     # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
     # The setter method name is derived from *name*.
     private macro bool_hint(name)
-      def {{name.id.gsub(/([^\A])([A-Z0-9]+)/, "\\1_\\2").downcase}}=(flag)
+      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
+              .gsub(/_GL/, "GL").downcase}}=(flag)
         value = bool_to_int(flag)
         @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value)
       end
@@ -34,7 +36,9 @@ module Espresso
     # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
     # The setter method name is derived from *name*.
     private macro int_hint(name)
-      def {{name.id.gsub(/([^\A])([A-Z0-9]+)/, "\\1_\\2").downcase}}=(value)
+      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
+              .gsub(/_GL/, "GL").downcase}}=(value)
         type = LibGLFW::WindowHint::{{name.id}}
         hint = if value
           raise ArgumentError.new("Hint value must be non-negative") if value < 0
@@ -50,7 +54,9 @@ module Espresso
     # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
     # The setter method name is derived from *name*.
     private macro string_hint(name)
-      def {{name.id.gsub(/([^\A])([A-Z0-9]+)/, "\\1_\\2").downcase}}=(value)
+      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
+              .gsub(/_GL/, "GL").downcase}}=(value)
         @string_hints << StringHint.new(LibGLFW::WindowHint::{{name.id}}, value)
       end
     end
@@ -61,7 +67,9 @@ module Espresso
     # The *enum_name* is the type name of the enum the value must be.
     # The enum value is converted using `Enum#to_i`, so the original GLFW values should be used.
     private macro enum_hint(name, enum_name)
-      def {{name.id.gsub(/([^\A])([A-Z0-9]+)/, "\\1_\\2").downcase}}=(value : {{enum_name.id}})
+      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
+              .gsub(/_GL/, "GL").downcase}}=(value : {{enum_name.id}})
         @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value.to_i)
       end
     end
