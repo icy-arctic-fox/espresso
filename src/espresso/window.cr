@@ -164,7 +164,7 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String)
-      fullscreen(title, Monitor.primary)
+      full_screen(title, Monitor.primary)
     end
 
     # Creates a full screen window and its associated OpenGL or OpenGL ES context.
@@ -179,7 +179,7 @@ module Espresso
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor)
       size = monitor.size
-      fullscreen(title, monitor, size.width, size.height)
+      full_screen(title, monitor, size.width, size.height)
     end
 
     # Creates a full screen window and its associated OpenGL or OpenGL ES context.
@@ -195,7 +195,7 @@ module Espresso
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor, share : Window)
       size = monitor.size
-      fullscreen(title, monitor, width, height, share)
+      full_screen(title, monitor, width, height, share)
     end
 
     # Creates a full screen window and its associated OpenGL or OpenGL ES context.
