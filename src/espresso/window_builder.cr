@@ -314,6 +314,11 @@ module Espresso
     # If enabled, situations that would have generated errors instead cause undefined behavior.
     bool_hint ContextNoError
 
+    # Specifies whether to use full resolution framebuffers on Retina displays.
+    # Possible values are true and false.
+    # This is applicable only on macOS platforms.
+    bool_hint CocoaRetinaFramebuffer
+
     # Resets all window hints to their defaults.
     private def reset_hints
       checked { LibGLFW.default_window_hints }
