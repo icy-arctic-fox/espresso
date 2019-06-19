@@ -329,6 +329,34 @@ module Espresso
     # This is applicable only on macOS platforms.
     bool_hint CocoaRetinaFramebuffer
 
+    # Specifies the UTF-8 encoded name to use for autosaving the window frame,
+    # or if empty disables frame autosaving for the window.
+    # This is applicable only on macOS platforms.
+    string_hint CocoaFrameName
+
+    # Specifies whether to in Automatic Graphics Switching,
+    # i.e. to allow the system to choose the integrated GPU for the OpenGL context
+    # and move it between GPUs if necessary or whether to force it to always run on the discrete GPU.
+    # This only affects systems with both integrated and discrete GPUs.
+    # Possible values are true and false.
+    # This is applicable only on macOS platforms.
+    #
+    # Simpler programs and tools may want to enable this to save power,
+    # while games and other applications performing advanced rendering will want to leave it disabled.
+    #
+    # A bundled application that wishes to participate in Automatic Graphics Switching
+    # should also declare this in its `Info.plist`
+    # by setting the `NSSupportsAutomaticGraphicsSwitching` key to true.
+    bool_hint CocoaGraphicsSwitching
+
+    # Specifies the desired ASCII encoded class part the ICCCM `WM_CLASS` window property.
+    # This is applicable only on X11 platforms.
+    string_hint X11ClassName
+
+    # Specifies the desired ASCII encoded instance part of the ICCCM `WM_CLASS` window property.
+    # This is applicable only on X11 platforms.
+    string_hint X11InstanceName
+
     # Resets all window hints to their defaults.
     private def reset_hints
       checked { LibGLFW.default_window_hints }
