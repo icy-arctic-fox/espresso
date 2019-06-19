@@ -86,17 +86,106 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def build(width, height, title)
+      apply_hints { Window.new(width, height, title) }
+    end
+
+    # Creates the window with all previously specified hints.
+    #
+    # The *width* argument is the desired width, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *height* argument is the desired height, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *share* argument is the window shose context to share resources with.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build(width, height, title, share)
+      apply_hints { Window.new(width, height, title, share) }
+    end
+
+    # Creates the window as full screen with all previously specified hints.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    #
+    # The primary monitor is used for the fullscreen window.
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build_full_screen(title : String)
+      apply_hints { Window.full_screen(title) }
+    end
+
+    # Creates the window as full screen with all previously specified hints.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    #
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build_full_screen(title : String, monitor : Monitor)
+      apply_hints { Window.full_screen(title, monitor) }
+    end
+
+    # Creates the window as full screen with all previously specified hints.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *share* argument is the window whose context to share resources with.
+    #
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build_full_screen(title : String, monitor : Monitor, share : Window)
+      apply_hints { Window.full_screen(title, monitor, share) }
+    end
+
+    # Creates the window as full screen with all previously specified hints.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *width* and *height* specify the desired size of the window on the monitor.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
+      apply_hints { Window.full_screen(title, monitor, width, height) }
+    end
+
+    # Creates the window as full screen with all previously specified hints.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *width* and *height* specify the desired size of the window on the monitor.
+    # The *share* argument is the window whose context to share resources with.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
+      apply_hints { Window.full_screen(title, monitor, width, height, share) }
+    end
+
+    # Applies all hints and then ensures they are reverted after calling the block.
+    # The return value is the value returned by the block.
+    private def apply_hints
       # Reset hints to their defaults.
-      # The apply all of the specified hints.
+      # Then apply all of the specified hints.
       reset_hints
       @hints.each(&.apply)
       @string_hints.each(&.apply)
 
-      # Create the window.
-      Window.new(width, height, title)
+      yield
     ensure
-      # Ensure window hints are reset after creation.
-      # This prevents any unintended side-effects.
       reset_hints
     end
 
