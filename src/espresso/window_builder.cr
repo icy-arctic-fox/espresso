@@ -15,6 +15,7 @@ module Espresso
     include ErrorHandling
 
     @hints = [] of Hint
+    @string_hints = [] of StringHint
 
     # Defines a setter method that specifies a flag for a boolean hint.
     # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
@@ -42,6 +43,15 @@ module Espresso
           Hint.new(type, LibGLFW::DONT_CARE)
         end
         @hints << hint
+      end
+    end
+
+    # Defines a setter method that accepts a string for a hint.
+    # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
+    # The setter method name is derived from *name*.
+    private macro string_hint(name)
+      def {{name.id.gsub(/([^\A])([A-Z0-9]+)/, "\\1_\\2").downcase}}=(value)
+        @string_hints << StringHint.new(LibGLFW::WindowHint::{{name.id}}, value)
       end
     end
 
@@ -330,13 +340,29 @@ module Espresso
 
       # Creates the hint.
       # The *hint* is the window hint to set,
-      # and *value* is the desired valuewhen the window is created.
+      # and *value* is the desired value when the window is created.
       def initialize(@hint : LibGLFW::WindowHint, @value : Int32)
       end
 
       # Applies the hint to GLFW.
       def apply
         checked { LibGLFW.window_hint(@hint, @value) }
+      end
+    end
+
+    # Information about a string-based hint.
+    private struct StringHint
+      include ErrorHandling
+
+      # Creates the hint.
+      # The *hint* is the window hint to set,
+      # and *value* is the desired value when the window is created.
+      def initialize(@hint : LibGLFW::WindowHint, @value : String)
+      end
+
+      # Applies the hint to GLFW.
+      def apply
+        checked { LibGLFW.window_hint_string(@hint, @value) }
       end
     end
   end
