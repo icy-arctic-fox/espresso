@@ -1,6 +1,11 @@
 require "glfw"
+require "./bool_conversion"
+require "./bounds"
 require "./error_handling"
 require "./monitor"
+require "./position"
+require "./scale"
+require "./size"
 
 module Espresso
   # Encapsulates both a window and a context.
@@ -112,6 +117,7 @@ module Espresso
   # **Wayland:** Screensaver inhibition requires the idle-inhibit protocol
   # to be implemented in the user's compositor.
   struct Window
+    include BoolConversion
     include ErrorHandling
 
     # Creates a window object by wrapping a GLFW window pointer.
@@ -229,6 +235,479 @@ module Espresso
         LibGLFW.create_window(width, height, title, monitor, share)
       end
       Window.new(pointer)
+    end
+
+    # Checks whether the window should be closed.
+    #
+    # See also: `#closing=`
+    def closing?
+      value = checked { LibGLFW.window_should_close(@pointer) }
+      int_to_bool(value)
+    end
+
+    # Sets whether the window should be closed.
+    # This can be used to override the user's attempt to close the window,
+    # or to signal that it should be closed.
+    #
+    # See also: `#closing?`
+    def closing=(flag)
+      value = bool_to_int(flag)
+      checked { LibGLFW.set_window_should_close(@pointer, value) }
+    end
+
+    # Updates the window's title.
+    # The new *title* is specified as a UTF-8 encoded string.
+    def title=(title)
+      checked { LibGLFW.set_window_title(@pointer, title) }
+    end
+
+    def icon=(icon)
+      raise NotImplementedError.new("Window#icon=")
+    end
+
+    # Retrieves the position, in screen coordinates, of the upper-left corner
+    # of the content area of this window.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def position
+      x, y = 0, 0
+      checked { LibGLFW.get_window_pos(@pointer, pointerof(x), pointerof(y)) }
+      Position.new(x, y)
+    end
+
+    # Sets the position, in screen coordinates, of the upper-left corner
+    # of the content area of this windowed mode window.
+    # If the window is a full screen window, this function does nothing.
+    #
+    # **Do not use this method** to move an already visible window
+    # unless you have very good reasons for doing so,
+    # as it will confuse and annoy the user.
+    #
+    # The window manager may put limits on what positions are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def position=(position : Tuple(Int32, Int32))
+      move(*position)
+    end
+
+    # Sets the position, in screen coordinates, of the upper-left corner
+    # of the content area of this windowed mode window.
+    # If the window is a full screen window, this function does nothing.
+    #
+    # **Do not use this method** to move an already visible window
+    # unless you have very good reasons for doing so,
+    # as it will confuse and annoy the user.
+    #
+    # The window manager may put limits on what positions are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def position=(position : NamedTuple(x: Int32, y: Int32))
+      move(**position)
+    end
+
+    # Sets the position, in screen coordinates, of the upper-left corner
+    # of the content area of this windowed mode window.
+    # If the window is a full screen window, this function does nothing.
+    #
+    # **Do not use this method** to move an already visible window
+    # unless you have very good reasons for doing so,
+    # as it will confuse and annoy the user.
+    #
+    # The window manager may put limits on what positions are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def position=(position)
+      move(position.x, position.y)
+    end
+
+    # Sets the position, in screen coordinates, of the upper-left corner
+    # of the content area of this windowed mode window.
+    # If the window is a full screen window, this function does nothing.
+    #
+    # **Do not use this method** to move an already visible window
+    # unless you have very good reasons for doing so,
+    # as it will confuse and annoy the user.
+    #
+    # The window manager may put limits on what positions are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def move(x, y)
+      checked { LibGLFW.set_window_pos(@pointer, x, y) }
+    end
+
+    # Retrieves the size, in screen coordinates, of the content area of this window.
+    # If you wish to retrieve the size of the framebuffer of the window in pixels, see `#framebuffer_size`.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def size
+      width, height = 0, 0
+      checked { LibGLFW.get_window_size(@pointer, pointerof(width), pointerof(height)) }
+      Size.new(width, height)
+    end
+
+    # Sets the size, in screen coordinates, of the content area of this window.
+    #
+    # For full screen windows, this function updates the resolution
+    # of its desired video mode and switches to the video mode closest to it,
+    # without affecting the window's context.
+    # As the context is unaffected, the bit depths of the framebuffer remain unchanged.
+    #
+    # If you wish to update the refresh rate of the desired video mode
+    # in addition to its resolution, see `#full_screen`.
+    #
+    # The window manager may put limits on what sizes are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** A full screen window will not attempt to change the mode,
+    # no matter what the requested size.
+    def size=(size : Tuple(Int32, Int32))
+      resize(*size)
+    end
+
+    # Sets the size, in screen coordinates, of the content area of this window.
+    #
+    # For full screen windows, this function updates the resolution
+    # of its desired video mode and switches to the video mode closest to it,
+    # without affecting the window's context.
+    # As the context is unaffected, the bit depths of the framebuffer remain unchanged.
+    #
+    # If you wish to update the refresh rate of the desired video mode
+    # in addition to its resolution, see `#full_screen`.
+    #
+    # The window manager may put limits on what sizes are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** A full screen window will not attempt to change the mode,
+    # no matter what the requested size.
+    def size=(size : NamedTuple(width: Int32, height: Int32))
+      resize(**size)
+    end
+
+    # Sets the size, in screen coordinates, of the content area of this window.
+    #
+    # For full screen windows, this function updates the resolution
+    # of its desired video mode and switches to the video mode closest to it,
+    # without affecting the window's context.
+    # As the context is unaffected, the bit depths of the framebuffer remain unchanged.
+    #
+    # If you wish to update the refresh rate of the desired video mode
+    # in addition to its resolution, see `#full_screen`.
+    #
+    # The window manager may put limits on what sizes are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** A full screen window will not attempt to change the mode,
+    # no matter what the requested size.
+    def size=(size)
+      resize(size.width, size.height)
+    end
+
+    # Sets the size, in screen coordinates, of the content area of this window.
+    #
+    # For full screen windows, this function updates the resolution
+    # of its desired video mode and switches to the video mode closest to it,
+    # without affecting the window's context.
+    # As the context is unaffected, the bit depths of the framebuffer remain unchanged.
+    #
+    # If you wish to update the refresh rate of the desired video mode
+    # in addition to its resolution, see `#full_screen`.
+    #
+    # The window manager may put limits on what sizes are allowed.
+    # GLFW cannot and should not override these limits.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** A full screen window will not attempt to change the mode,
+    # no matter what the requested size.
+    def resize(width, height)
+      checked { LibGLFW.set_window_size(@pointer, width, height) }
+    end
+
+    # Sets the size limits of the content area of this window.
+    # If the window is full screen, the size limits only take effect once it is made windowed.
+    # If the window is not resizable, this function does nothing.
+    #
+    # The size limits are applied immediately to a windowed mode window and may cause it to be resized.
+    #
+    # The maximum dimensions must be greater than or equal to the minimum dimensions
+    # and all must be greater than or equal to zero.
+    # Specify nil for an argument to leave it unbounded.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `InvalidValueError`, and `PlatformError`.
+    #
+    # If you set size limits and an aspect ratio that conflict, the results are undefined.
+    #
+    # **Wayland:** The size limits will not be applied until the window is actually resized,
+    # either by the user or by the compositor.
+    def limit_size(min_width = nil, min_height = nil, max_width = nil, max_height = nil)
+      min_width ||= LibGLFW::DONT_CARE
+      min_height ||= LibGLFW::DONT_CARE
+      max_width ||= LibGLFW::DONT_CARE
+      max_height ||= LibGLFW::DONT_CARE
+      checked { LibGLFW.set_window_size_limits(@pointer, min_width, min_height, max_width, max_height) }
+    end
+
+    # Unsets the size limits of the content area of this window.
+    # If the window is full screen, the size limits only take effect once it is made windowed.
+    # If the window is not resizable, this function does nothing.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, and `PlatformError`.
+    #
+    # **Wayland:** The size limits will not be applied until the window is actually resized,
+    # either by the user or by the compositor.
+    def unlimit_size
+      checked do
+        LibGLFW.set_window_size_limits(@pointer,
+          LibGLFW::DONT_CARE, LibGLFW::DONT_CARE, LibGLFW::DONT_CARE, LibGLFW::DONT_CARE)
+      end
+    end
+
+    # Sets the required aspect ratio of the content area of this window.
+    # If the window is full screen, the aspect ratio only takes effect once it is made windowed.
+    # If the window is not resizable, this function does nothing.
+    #
+    # The aspect ratio is specified as a *numerator* and a *denominator*
+    # and both values must be greater than zero.
+    # For example, the common 16:9 aspect ratio is specified as 16 and 9, respectively.
+    #
+    # The aspect ratio is applied immediately to a windowed mode window and may cause it to be resized.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `InvalidValueError`, and `PlatformError`.
+    #
+    # If you set size limits and an aspect ratio that conflict, the results are undefined.
+    #
+    # **Wayland:** The aspect ratio will not be applied until the window is actually resized,
+    # either by the user or by the compositor.
+    def aspect_ratio(numerator, denominator)
+      checked { LibGLFW.set_window_aspect_ratio(@pointer, numerator, denominator) }
+    end
+
+    # Disables the aspect ratio limit.
+    # Allows the window to be resized without restricting to a given aspect ratio.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def disable_aspect_ratio
+      aspect_ratio(LibGLFW::DONT_CARE, LibGLFW::DONT_CARE)
+    end
+
+    # Retrieves the size, in pixels, of the framebuffer of this window.
+    # If you wish to retrieve the size of the window in screen coordinates, see `#size`.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def framebuffer_size
+      width, height = 0, 0
+      checked { LibGLFW.get_framebuffer_size(@pointer, pointerof(width), pointerof(height)) }
+      Size.new(width, height)
+    end
+
+    def frame_size
+      raise NotImplementedError.new("Window#frame_size")
+    end
+
+    # Retrieves the content scale for this window.
+    # The content scale is the ratio between the current DPI and the platform's default DPI.
+    # This is especially important for text and any UI elements.
+    # If the pixel dimensions of your UI scaled by this look appropriate on your machine
+    # then it should appear at a reasonable size on other machines
+    # regardless of their DPI and scaling settings.
+    # This relies on the system DPI and scaling settings being somewhat correct.
+    #
+    # On systems where each monitors can have its own content scale,
+    # the window content scale will depend on which monitor the system considers the window to be on.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def scale
+      x, y = 0f32, 0f32
+      checked { LibGLFW.get_window_content_scale(@pointer, pointerof(x), pointerof(y)) }
+      Scale.new(x, y)
+    end
+
+    # Returns the opacity of the window, including any decorations.
+    #
+    # The opacity (or alpha) value is a positive finite number between zero and one,
+    # where zero is fully transparent and one is fully opaque.
+    # If the system does not support whole window transparency, this function always returns one.
+    #
+    # The initial opacity value for newly created windows is one.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def opacity
+      checked { LibGLFW.get_window_opacity(@pointer) }
+    end
+
+    # Sets the opacity of the window, including any decorations.
+    #
+    # The opacity (or alpha) value is a positive finite number between zero and one,
+    # where zero is fully transparent and one is fully opaque.
+    #
+    # The initial opacity value for newly created windows is one.
+    #
+    # A window created with framebuffer transparency may not use whole window transparency.
+    # The results of doing this are undefined.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def opacity=(opacity)
+      checked { LibGLFW.set_window_opacity(@pointer, opacity) }
+    end
+
+    # Iconifies (minimizes) this window if it was previously restored.
+    # If the window is already iconified, this function does nothing.
+    #
+    # If the specified window is a full screen window,
+    # the original monitor resolution is restored until the window is restored.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** There is no concept of iconification in wl_shell,
+    # this method will raise a `PlatformError` when using this deprecated protocol.
+    def iconify
+      checked { LibGLFW.iconify_window(@pointer) }
+    end
+
+    # Restores this window if it was previously iconified (minimized) or maximized.
+    # If the window is already restored, this function does nothing.
+    #
+    # If the specified window is a full screen window,
+    # the resolution chosen for the window is restored on the selected monitor.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def restore
+      checked { LibGLFW.restore_window(@pointer) }
+    end
+
+    # Maximizes this window if it was previously not maximized.
+    # If the window is already maximized, this function does nothing.
+    #
+    # If the specified window is a full screen window, this function does nothing.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def maximize
+      checked { LibGLFW.maximize_window(@pointer) }
+    end
+
+    # Makes this window visible if it was previously hidden.
+    # If the window is already visible or is in full screen mode, this function does nothing.
+    #
+    # By default, windowed mode windows are focused when shown.
+    # Set the `WindowBuilder#focus_on_show=` hint to change this behavior,
+    # or change the behavior for an existing window with `glfwSetWindowAttrib`.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def show
+      checked { LibGLFW.show_window(@pointer) }
+    end
+
+    # Hides this window if it was previously visible.
+    # If the window is already hidden or is in full screen mode, this function does nothing.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def hide
+      checked { LibGLFW.hide_window(@pointer) }
+    end
+
+    # Brings this window to front and sets input focus.
+    # The window should already be visible and not iconified.
+    #
+    # By default, both windowed and full screen mode windows are focused when initially created.
+    # Set the `WindowBuilder#focused=` hint to disable this behavior.
+    #
+    # Also by default, windowed mode windows are focused when shown with `#show`.
+    # Set the `WindowBuilder#focus_on_show=` hint to disable this behavior.
+    #
+    # **Do not use this function** to steal focus from other applications
+    # unless you are certain that is what the user wants.
+    # Focus stealing can be extremely disruptive.
+    #
+    # For a less disruptive way of getting the user's attention, see `#request_attention`.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** It is not possible for an application to bring its windows to front,
+    # this method will always raise a `PlatformError`.
+    def focus
+      checked { LibGLFW.focus_window(@pointer) }
+    end
+
+    # Requests user attention to this window.
+    # On platforms where this is not supported,
+    # attention is requested to the application as a whole.
+    #
+    # Once the user has given attention,
+    # usually by focusing the window or application,
+    # the system will end the request automatically.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **macOS:** Attention is requested to the application as a whole, not the specific window.
+    def request_attention
+      checked { LibGLFW.request_window_attention(@pointer) }
+    end
+
+    # Attempts to retrieve the monitor the full screen window is using.
+    # If the window isn't full screen, then nil is returned.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
+    def monitor?
+      pointer = expect_truthy { LibGLFW.get_monitor_window(@pointer) }
+      pointer ? Monitor.new(pointer) : nil
+    end
+
+    # Retrieves the monitor the full screen window is using.
+    # If the window isn't full screen, then an error is raised.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `NilAssertionError`.
+    def monitor
+      monitor?.not_nil!
+    end
+
+    def monitor=(monitor)
+      full_screen!(monitor)
+    end
+
+    def full_screen!
+      full_screen(Monitor.primary)
+    end
+
+    def full_screen!(monitor)
+      size = monitor.size
+      full_screen(monitor, size.width, size.height)
+    end
+
+    def full_screen!(monitor, width, height)
+      checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, LibGLFW::DONT_CARE) }
+    end
+
+    def full_screen!(monitor, width, height, refresh_rate)
+      checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, refresh_rate) }
+    end
+
+    def windowed!(x, y, width, height)
+      checked { LibGLFW.set_window_monitor(@pointer, nil, x, y, width, height, LibGLFW::DONT_CARE) }
+    end
+
+    def full_screen?
+    end
+
+    def windowed?
+    end
+
+    def user_pointer
+    end
+
+    def user_pointer=(pointer)
+    end
+
+    def swap_buffers
     end
 
     # Returns the underlying GLFW window and context pointer.
