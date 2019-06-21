@@ -36,7 +36,7 @@ module Espresso
   # the supported video mode most closely matching the desired video mode is set for the specified monitor.
   #
   # Once you have created the window,
-  # you can switch it between windowed and full screen mode with `glfwSetWindowMonitor`.
+  # you can switch it between windowed and full screen mode with `#full_screen!` and `#windowed!`.
   # This will not affect its OpenGL or OpenGL ES context.
   #
   # By default, newly created windows use the placement recommended by the window system.
@@ -60,7 +60,7 @@ module Espresso
   # **Windows:** If the executable has an icon resource named GLFW_ICON,
   # it will be set as the initial icon for the window.
   # If no such icon is present, the IDI_APPLICATION icon will be used instead.
-  # To set a different icon, see `glfwSetWindowIcon`.
+  # To set a different icon, see `#icon=`.
   #
   # **Windows:** The context to share resources with must not be current on any other thread.
   #
@@ -653,7 +653,7 @@ module Espresso
     #
     # By default, windowed mode windows are focused when shown.
     # Set the `WindowBuilder#focus_on_show=` hint to change this behavior,
-    # or change the behavior for an existing window with `glfwSetWindowAttrib`.
+    # or change the behavior for an existing window with `#focus_on_show=`.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def show
