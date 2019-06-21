@@ -1083,5 +1083,95 @@ module Espresso
     def to_unsafe
       @pointer
     end
+
+    # Processes only those events that are already in the event queue and then returns immediately.
+    # Processing events will cause the window and input callbacks associated with those events to be called.
+    #
+    # On some platforms, a window move, resize or menu operation will cause event processing to block.
+    # This is due to how event processing is designed on those platforms.
+    # You can use the window refresh callback to redraw the contents of your window
+    # when necessary during such operations.
+    #
+    # Do not assume that callbacks you set will only be called
+    # in response to event processing functions like this one.
+    # While it is necessary to poll for events,
+    # window systems that require GLFW to register callbacks of its own
+    # can pass events to GLFW in response to many window system function calls.
+    # GLFW will pass those events on to the application callbacks before returning.
+    #
+    # Event processing is not required for joystick input to work.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def self.poll_events
+      ErrorHandling.static_checked { LibGLFW.poll_events }
+    end
+
+    # Puts the calling thread to sleep until at least one event is available in the event queue.
+    # Once one or more events are available, it behaves exactly like `#poll_events`,
+    # i.e. the events in the queue are processed and the function then returns immediately.
+    # Processing events will cause the window and input callbacks associated with those events to be called.
+    #
+    # Since not all events are associated with callbacks,
+    # this function may return without a callback having been called even if you are monitoring all callbacks.
+    #
+    # On some platforms, a window move, resize or menu operation will cause event processing to block.
+    # This is due to how event processing is designed on those platforms.
+    # You can use the window refresh callback to redraw the contents of your window
+    # when necessary during such operations.
+    #
+    # Do not assume that callbacks you set will only be called
+    # in response to event processing functions like this one.
+    # While it is necessary to poll for events,
+    # window systems that require GLFW to register callbacks of its own
+    # can pass events to GLFW in response to many window system function calls.
+    # GLFW will pass those events on to the application callbacks before returning.
+    #
+    # Event processing is not required for joystick input to work.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def self.wait_events
+      ErrorHandling.static_checked { LibGLFW.wait_events }
+    end
+
+    # Puts the calling thread to sleep until at least one event is available in the event queue,
+    # or until the specified timeout is reached.
+    # If one or more events are available, it behaves exactly like `#poll_events`,
+    # i.e. the events in the queue are processed and the function then returns immediately.
+    # Processing events will cause the window and input callbacks associated with those events to be called.
+    #
+    # The *timeout* value must be a positive finite number.
+    # It is the maximum amount of time, in seconds, to wait.
+    #
+    # Since not all events are associated with callbacks,
+    # this function may return without a callback having been called even if you are monitoring all callbacks.
+    #
+    # On some platforms, a window move, resize or menu operation will cause event processing to block.
+    # This is due to how event processing is designed on those platforms.
+    # You can use the window refresh callback to redraw the contents of your window
+    # when necessary during such operations.
+    #
+    # Do not assume that callbacks you set will only be called
+    # in response to event processing functions like this one.
+    # While it is necessary to poll for events,
+    # window systems that require GLFW to register callbacks of its own
+    # can pass events to GLFW in response to many window system function calls.
+    # GLFW will pass those events on to the application callbacks before returning.
+    #
+    # Event processing is not required for joystick input to work.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `ArgumentError`.
+    def self.wait_events(timeout)
+      ErrorHandling.static_checked { LibGLFW.wait_events_timeout(timeout) }
+    rescue ex : InvalidValueError
+      raise ArgumentError.new(ex.message)
+    end
+
+    # Posts an empty event from the current thread to the event queue,
+    # causing `#wait_events` to return.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def self.post_empty_event
+      ErrorHandling.static_checked { LibGLFW.post_empty_event }
+    end
   end
 end
