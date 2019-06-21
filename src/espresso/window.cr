@@ -10,7 +10,7 @@ require "./size"
 
 module Espresso
   # Encapsulates both a window and a context.
-  # Windows can be created with the `#new` and `#full_screen` methods.
+  # Windows can be created with the `#initialize` and `#full_screen` methods.
   # As the window and context are inseparably linked,
   # the underlying object pointer is used as both a context and window handle.
   #
@@ -24,7 +24,7 @@ module Espresso
   # as not all parameters and hints are hard constraints.
   # This includes the size of the window, especially for full screen windows.
   # To query the actual attributes of the created window, framebuffer and context,
-  # see `glfwGetWindowAttrib`, `glfwGetWindowSize`, and `glfwGetFramebufferSize`.
+  # see `#size`, and `#framebuffer_size`.
   #
   # To create a full screen window, use the `#full_screen` method variants.
   # Unless you have a way for the user to choose a specific monitor,
@@ -79,7 +79,7 @@ module Espresso
   # If GLFW finds a `MainMenu.nib` it is loaded and assumed to contain a menu bar.
   # Otherwise a minimal menu bar is created manually with common commands like Hide, Quit and About.
   # The About entry opens a minimal about dialog with information from the application's bundle.
-  # Menu bar creation can be disabled entirely with the `WindowBuilder#cocoa_menubar=` init hint.
+  # Menu bar creation can be disabled entirely with the *cocoa_menubar* flag in `Espresso#init`.
   #
   # **macOS:** On OS X 10.10 and later the window frame will not be rendered at full resolution on Retina displays
   # unless the `WindowBuilder#cocoa_retina_framebuffer=` hint is true and the `NSHighResolutionCapable` key
