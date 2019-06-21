@@ -3,6 +3,7 @@ require "semantic_version"
 require "./bool_conversion"
 require "./bounds"
 require "./error_handling"
+require "./frame_size"
 require "./monitor"
 require "./position"
 require "./scale"
@@ -563,8 +564,22 @@ module Espresso
       Size.new(width, height)
     end
 
+    # Retrieves the size, in screen coordinates, of each edge of the frame of this window.
+    # This size includes the title bar, if the window has one.
+    # The size of the frame may vary depending on the window-related hints used to create it.
+    #
+    # Because this method retrieves the size of each window frame edge
+    # and not the offset along a particular coordinate axis,
+    # the retrieved values will always be zero or positive.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def frame_size
-      raise NotImplementedError.new("Window#frame_size")
+      left, top, right, bottom = 0, 0, 0, 0
+      checked do
+        LibGLFW.get_window_frame_size(@pointer,
+          pointerof(left), pointerof(top), pointerof(right), pointerof(bottom))
+      end
+      FrameSize.new(left, top, right, bottom)
     end
 
     # Retrieves the content scale for this window.
