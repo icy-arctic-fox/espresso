@@ -268,7 +268,7 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
-      pointer = expect_truthy do
+      pointer = ErrorHandling.static_expect_truthy do
         LibGLFW.create_window(width, height, title, monitor, nil)
       end
       Window.new(pointer)
@@ -285,7 +285,7 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
-      pointer = expect_truthy do
+      pointer = ErrorHandling.static_expect_truthy do
         LibGLFW.create_window(width, height, title, monitor, share)
       end
       Window.new(pointer)
