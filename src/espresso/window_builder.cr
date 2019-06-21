@@ -396,11 +396,17 @@ module Espresso
       @hints << Hint.new(LibGLFW::WindowHint::ContextVersionMinor, minor)
     end
 
+    # Specifies whether the OpenGL context should be forward-compatible,
+    # i.e. one where all functionality deprecated in the requested version of OpenGL is removed.
+    # This must only be used if the requested OpenGL version is 3.0 or above.
+    # If OpenGL ES is requested, this hint is ignored.
+    bool_hint OpenGLForwardCompat
+
     # Specifies whether to create a debug OpenGL context,
     # which may have additional error and performance issue reporting functionality.
     # Possible values are true and false.
     # If OpenGL ES is requested, this hint is ignored.
-    bool_hint OpenGLForwardCompat
+    bool_hint OpenGLDebugContext
 
     # Specifies which OpenGL profile to create the context for.
     # Possible values are in the `OpenGLProfile` enum.
