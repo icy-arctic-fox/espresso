@@ -670,44 +670,148 @@ module Espresso
       monitor?.not_nil!
     end
 
+    # Sets the window to full screen mode on the specified monitor.
+    # The window's size will be changed to the monitor's size.
+    # The monitor's existing frame rate will be used.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def monitor=(monitor)
       full_screen!(monitor)
     end
 
+    # Makes the window full screen on the primary monitor.
+    # The window's size will be changed to the monitor's size.
+    # The monitor's existing frame rate will be used.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def full_screen!
-      full_screen(Monitor.primary)
+      full_screen!(Monitor.primary)
     end
 
+    # Makes the window full screen on the specified monitor.
+    # The window's size will be changed to the monitor's size.
+    # The monitor's existing frame rate will be used.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def full_screen!(monitor)
       size = monitor.size
-      full_screen(monitor, size.width, size.height)
+      full_screen!(monitor, size.width, size.height)
     end
 
+    # Makes the window full screen on the specified monitor.
+    # The monitor and window's size will be changed to the dimensions given.
+    # The monitor's existing frame rate will be used.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** Setting the window to full screen will not attempt to change the mode,
+    # no matter what the requested size or refresh rate.
     def full_screen!(monitor, width, height)
       checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, LibGLFW::DONT_CARE) }
     end
 
+    # Makes the window full screen on the specified monitor.
+    # The monitor and window's size will be changed to the dimensions given.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** Setting the window to full screen will not attempt to change the mode,
+    # no matter what the requested size or refresh rate.
     def full_screen!(monitor, width, height, refresh_rate)
       checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, refresh_rate) }
     end
 
+    # Changes the window from full screen to windowed mode.
+    # The window will be resized to the specified dimensions
+    # and positioned at the given *x* and *y* coordinates.
+    #
+    # When a window transitions from full screen to windowed mode,
+    # this method restores any previous window settings
+    # such as whether it is decorated, floating, resizable, has size or aspect ratio limits, etc.
+    #
+    # The OpenGL or OpenGL ES context will not be destroyed
+    # or otherwise affected by any resizing or mode switching,
+    # although you may need to update your viewport if the framebuffer size has changed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Wayland:** The desired window position is ignored,
+    # as there is no way for an application to set this property.
     def windowed!(x, y, width, height)
       checked { LibGLFW.set_window_monitor(@pointer, nil, x, y, width, height, LibGLFW::DONT_CARE) }
     end
 
+    # Checks whether the window is currently in full screen mode.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
     def full_screen?
+      !windowed?
     end
 
+    # Checks whether the window is currently in windowed mode.
+    # In other words, it is *not* in full screen mode.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
     def windowed?
+      monitor?.nil?
     end
 
+    # Retrieves the current value of the user-defined pointer for this window.
+    # This can be used for any purpose you need and will not be modified by GLFW.
+    # The value will be kept until the window is destroyed or until the library is terminated.
+    # The initial value is nil.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
     def user_pointer
+      expect_truthy { LibGLFW.get_window_user_pointer(@pointer, pointer) }
     end
 
+    # Updates the value of the user-defined pointer for this window.
+    # This can be used for any purpose you need and will not be modified by GLFW.
+    # The value will be kept until the window is destroyed or until the library is terminated.
+    # The initial value is nil.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
     def user_pointer=(pointer)
+      checked { LibGLFW.set_window_user_pointer(@pointer, pointer) }
     end
 
+    # Swaps the front and back buffers of this window
+    # when rendering with OpenGL or OpenGL ES.
+    # If the swap interval is greater than zero,
+    # the GPU driver waits the specified number of screen updates before swapping the buffers.
+    #
+    # This window must have an OpenGL or OpenGL ES context.
+    # Calling this on a window without a context will raise `NoWindowContextError`.
+    #
+    # This function does not apply to Vulkan.
+    # If you are rendering with Vulkan, see `vkQueuePresentKHR` instead.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `NoWindowContextError`, and `PlatformError`.
+    #
+    # **EGL:** The context of the specified window must be current on the calling thread.
     def swap_buffers
+      checked { LibGLFW.swap_buffers(@pointer) }
     end
 
     # Returns the underlying GLFW window and context pointer.
