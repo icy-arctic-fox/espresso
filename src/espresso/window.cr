@@ -1079,6 +1079,54 @@ module Espresso
       iconified?
     end
 
+    # Makes the OpenGL or OpenGL ES context of this window current on the calling thread.
+    # A context must only be made current on a single thread at a time
+    # and each thread can have only a single current context at a time.
+    #
+    # When moving a context between threads,
+    # you must make it non-current on the old thread before making it current on the new one.
+    #
+    # By default, making a context non-current implicitly forces a pipeline flush.
+    # On machines that support `GL_KHR_context_flush_control`,
+    # you can control whether a context performs this flush
+    # by setting the `WindowBuilder#context_release_behavior=` hint.
+    #
+    # This window must have an OpenGL or OpenGL ES context.
+    # Specifying a window without a context will generate a `NoWindowContextError` error.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `NoWindowContextError`, and `PlatformError`.
+    def current!
+      checked { LibGLFW.make_context_current(@pointer) }
+    end
+
+    # Checks whether this window's OpenGL or OpenGL ES context is current on the calling thread.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
+    #
+    # See also: `#current!`
+    def current?
+      @pointer == expect_truthy { LibGLFW.get_current_context }
+    end
+
+    # Returns the window whose OpenGL or OpenGL ES context is current on the calling thread.
+    # This will return nil if no window's context is current.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`.
+    #
+    # See also: `#current!`
+    def self.current?
+      pointer = ErrorHandling.static_expect_truthy { LibGLFW.get_current_context }
+      pointer ? Window.new(pointer) : nil
+    end
+
+    # Returns the window whose OpenGL or OpenGL ES context is current on the calling thread.
+    # This will raise a `NilAssertionError` if no window is current.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `NilAssertionError`.
+    def self.current
+      current?.not_nil!
+    end
+
     # Returns the underlying GLFW window and context pointer.
     def to_unsafe
       @pointer
