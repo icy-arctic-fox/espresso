@@ -174,6 +174,40 @@ module Espresso
       end
     end
 
+    private macro event(name, event_type, function)
+      @@{{name.id}}_listeners = {} of LibGLFW::Window => Array({{event_type.id}} ->)
+
+      protected def self.{{name.id}}_callback(*args)
+        pointer = args.first
+        event = {{event_type}}.new(*args)
+        return unless (listeners = @@{{name.id}}_listeners[pointer]?)
+
+        listeners.each(&.call(event))
+      end
+
+      def on_{{name.id}}(&block : {{event_type.id}} ->)
+        LibGLFW.{{function.id}}(@pointer, ->Window.{{name.id}}_callback) unless @@{{name.id}}_listeners.has_key?(@pointer)
+        if (listeners = @@{{name.id}}_listeners[@pointer]?)
+          listeners << block
+        else
+          @@{{name.id}}_listeners[@pointer] = [block]
+        end
+        block
+      end
+
+      def remove_{{name.id}}_listener(proc : {{event_type.id}} ->) : Nil
+        return unless (listeners = @@{{name.id}}_listeners[@pointer]?)
+
+        listeners.delete(proc)
+        return unless listeners.empty?
+
+        @@{{name.id}}_listeners.delete(@pointer)
+        LibGLFW.{{function.id}}(nil)
+      end
+    end
+
+    event closing, WindowClosingEvent, set_window_close_callback
+
     # Creates a window object by wrapping a GLFW window pointer.
     protected def initialize(@pointer : LibGLFW::Window)
     end
