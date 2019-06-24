@@ -3,6 +3,7 @@ require "semantic_version"
 require "./bool_conversion"
 require "./bounds"
 require "./error_handling"
+require "./event_handling"
 require "./frame_size"
 require "./monitor"
 require "./position"
@@ -121,6 +122,7 @@ module Espresso
   struct Window
     include BoolConversion
     include ErrorHandling
+    include EventHandling
 
     # Defines a getter method that retrieves the specified boolean attribute.
     # The *name* is the `LibGLFW::WindowAttribute` enum (without prefix) to get.
@@ -171,38 +173,6 @@ module Espresso
         attribute = LibGLFW::WindowAttribute::{{name.id}}
         value = bool_to_int(flag)
         checked { LibGLFW.set_window_attrib(@pointer, attribute, value) }
-      end
-    end
-
-    private macro event(name, event_type, function)
-      @@{{name.id}}_listeners = {} of LibGLFW::Window => Array({{event_type.id}} ->)
-
-      protected def self.{{name.id}}_callback(*args)
-        pointer = args.first
-        event = {{event_type}}.new(*args)
-        return unless (listeners = @@{{name.id}}_listeners[pointer]?)
-
-        listeners.each(&.call(event))
-      end
-
-      def on_{{name.id}}(&block : {{event_type.id}} ->)
-        LibGLFW.{{function.id}}(@pointer, ->Window.{{name.id}}_callback) unless @@{{name.id}}_listeners.has_key?(@pointer)
-        if (listeners = @@{{name.id}}_listeners[@pointer]?)
-          listeners << block
-        else
-          @@{{name.id}}_listeners[@pointer] = [block]
-        end
-        block
-      end
-
-      def remove_{{name.id}}_listener(proc : {{event_type.id}} ->) : Nil
-        return unless (listeners = @@{{name.id}}_listeners[@pointer]?)
-
-        listeners.delete(proc)
-        return unless listeners.empty?
-
-        @@{{name.id}}_listeners.delete(@pointer)
-        LibGLFW.{{function.id}}(nil)
       end
     end
 
