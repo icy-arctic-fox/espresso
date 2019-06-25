@@ -1,9 +1,8 @@
 require "glfw"
+require "./enum_copy"
 
 module Espresso
-  enum OpenGLProfile
-    Core   = LibGLFW::OpenGLProfile::Core
-    Compat = LibGLFW::OpenGLProfile::Compat
-    Any    = LibGLFW::OpenGLProfile::Any
-  end
+  include EnumCopy
+
+  copy_enum OpenGLProfile
 end

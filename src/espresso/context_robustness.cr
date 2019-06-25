@@ -1,9 +1,8 @@
 require "glfw"
+require "./enum_copy"
 
 module Espresso
-  enum ContextRobustness
-    LoseContextOnReset  = LibGLFW::ContextRobustness::LoseContextOnReset
-    NoResetNotification = LibGLFW::ContextRobustness::NoResetNotification
-    None                = LibGLFW::ContextRobustness::None
-  end
+  include EnumCopy
+
+  copy_enum ContextRobustness
 end
