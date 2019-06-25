@@ -266,6 +266,21 @@ module Espresso
     # To remove the listener, call `#remove_scale_listener` with the proc returned by this method.
     event scale, WindowScaleEvent, set_window_content_scale_callback
 
+    # Registers a listener to respond when the window is iconified (minimized) or restored from being iconified.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `WindowIconifyEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_iconify_listener` with the proc returned by this method.
+    def on_minimize(&block : WindowIconifyEvent ->)
+      on_iconify(&block)
+    end
+
+    # Removes a previously registered listener that responded to the `#on_minimize` callback.
+    # The *proc* argument should be the return value of the `#on_minimize` method.
+    def remove_minimize_listener(proc : WindowIconifyEvent ->) : Nil
+      remove_iconify_listener(proc)
+    end
+
     # Removes all previously registered listeners for all window events.
     private def remove_all_listeners
       clear_move_listeners
