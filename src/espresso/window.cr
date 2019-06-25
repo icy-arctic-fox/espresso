@@ -561,6 +561,7 @@ module Espresso
       clear_maximize_listeners
       clear_framebuffer_resize_listeners
       clear_scale_listeners
+      mouse.remove_all_listeners
     end
 
     # Retrieves the mouse instance for this window.

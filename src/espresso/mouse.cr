@@ -3,6 +3,7 @@ require "./bool_conversion"
 require "./button_state"
 require "./coordinates"
 require "./error_handling"
+require "./event_handling"
 require "./mouse_button"
 
 module Espresso
@@ -12,9 +13,58 @@ module Espresso
   struct Mouse
     include BoolConversion
     include ErrorHandling
+    include EventHandling
 
     # Creates the mouse instance from a GLFW window pointer.
     protected def initialize(@pointer : LibGLFW::Window)
+    end
+
+    # Registers a listener to respond when a mouse button is pressed or released.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `MouseButtonEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_button_listener` with the proc returned by this method.
+    #
+    # When a window loses input focus,
+    # it will generate synthetic mouse button release events for all pressed mouse buttons.
+    # You can tell these events from user-generated events
+    # by the fact that the synthetic ones are generated after the focus loss event has been processed,
+    # i.e. after the `Window#on_focus` event has been triggered.
+    event button, MouseButtonEvent, set_mouse_button_callback
+
+    # Registers a listener to respond when the mouse moves.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `MouseMoveEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_move_listener` with the proc returned by this method.
+    #
+    # The block is provided with the position, in screen coordinates,
+    # relative to the upper-left corner of the content area of the window.
+    event move, MouseMoveEvent, set_cursor_pos_callback
+
+    # Registers a listener to respond when the mouse enters or leaves the window's content area.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `MouseEnterEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_enter_listener` with the proc returned by this method.
+    event enter, MouseEnterEvent, set_cursor_enter_callback
+
+    # Registers a listener to respond when the mouse is scrolled.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `MouseScrollEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_scroll_listener` with the proc returned by this method.
+    #
+    # The scroll callback receives all scrolling input,
+    # like that from a mouse wheel or a touchpad scrolling area.
+    event scroll, MouseScrollEvent, set_scroll_callback
+
+    # Removes all previously registered listeners for all mouse events.
+    protected def remove_all_listeners
+      clear_button_listeners
+      clear_move_listeners
+      clear_enter_listeners
+      clear_scroll_listeners
     end
 
     # Returns the last state reported for the specified mouse button to the window.
