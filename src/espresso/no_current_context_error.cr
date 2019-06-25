@@ -6,7 +6,17 @@ module Espresso
   # but none is currently set on the calling thread.
   #
   # Ensure a context is current before calling functions that require a current context.
-  # TODO: Add example on how to do this.
+  # This can be done with:
+  # ```
+  # window = Espresso::Window.new(800, 600, "GLFW")
+  # window.current!
+  # ```
+  # or:
+  # ```
+  # Espresso::Window.open(800, 600) do |window|
+  #   # Code that uses the window here.
+  # end
+  # ```
   class NoCurrentContextError < GLFWError
     # Underlying value that represents the error type.
     def code
