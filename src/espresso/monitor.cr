@@ -39,7 +39,7 @@ module Espresso
     # but other monitors may be moved to a different index
     # when a monitor is connected or disconnected.
     def self.all
-      count = 0
+      count = uninitialized Int32
       pointers = ErrorHandling.static_expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
       return [] of Monitor unless pointers # nil is returned if there's no monitors.
 
@@ -152,7 +152,7 @@ module Espresso
     #
     # Can raise a `PlatformError`.
     def video_modes
-      count = 0
+      count = uninitialized Int32
       video_modes_pointer = expect_truthy { LibGLFW.get_video_modes(@pointer, pointerof(count)) }
       video_modes = Slice.new(video_modes_pointer, count, read_only: true)
       video_modes.map { |video_mode| VideoMode.new(video_mode) }

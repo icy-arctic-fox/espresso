@@ -595,7 +595,9 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def position
-      x, y = 0, 0
+      x = uninitialized Int32
+      y = uninitialized Int32
+
       checked { LibGLFW.get_window_pos(@pointer, pointerof(x), pointerof(y)) }
       Position.new(x, y)
     end
@@ -669,7 +671,9 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def size
-      width, height = 0, 0
+      width = uninitialized Int32
+      height = uninitialized Int32
+
       checked { LibGLFW.get_window_size(@pointer, pointerof(width), pointerof(height)) }
       Size.new(width, height)
     end
@@ -830,7 +834,9 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def framebuffer_size
-      width, height = 0, 0
+      width = uninitialized Int32
+      height = uninitialized Int32
+
       checked { LibGLFW.get_framebuffer_size(@pointer, pointerof(width), pointerof(height)) }
       Size.new(width, height)
     end
@@ -845,7 +851,11 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def frame_size
-      left, top, right, bottom = 0, 0, 0, 0
+      left = uninitialized Int32
+      top = uninitialized Int32
+      right = uninitialized Int32
+      bottom = uninitialized Int32
+
       checked do
         LibGLFW.get_window_frame_size(@pointer,
           pointerof(left), pointerof(top), pointerof(right), pointerof(bottom))
@@ -866,7 +876,9 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def scale
-      x, y = 0f32, 0f32
+      x = uninitialized Float32
+      y = uninitialized Float32
+
       checked { LibGLFW.get_window_content_scale(@pointer, pointerof(x), pointerof(y)) }
       Scale.new(x, y)
     end
