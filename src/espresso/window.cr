@@ -396,6 +396,143 @@ module Espresso
       checked { LibGLFW.destroy_window(@pointer) }
     end
 
+    # Creates a window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *width* argument is the desired width, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *height* argument is the desired height, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *title* is the initial, UTF-8 encoded window title.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.open(width : Int32, height : Int32, title : String)
+      Window.new(width, height, title).tap do |window|
+        window.current!
+        yield window
+      ensure
+        window.destroy!
+      end
+    end
+
+    # Creates a window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *width* argument is the desired width, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *height* argument is the desired height, in screen coordinates, of the window.
+    # This must be greater than zero.
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *share* argument is the window shose context to share resources with.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.open(width : Int32, height : Int32, title : String, share : Window)
+      Window.new(width, height, title, share).tap do |window|
+        window.current!
+        yield window
+      ensure
+        window.destroy!
+      end
+    end
+
+    # Creates a full screen window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    #
+    # The primary monitor is used for the fullscreen window.
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.full_screen(title : String, &block)
+      full_screen(title, Monitor.primary, &block)
+    end
+
+    # Creates a full screen window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    #
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.full_screen(title : String, monitor : Monitor, &block)
+      size = monitor.size
+      full_screen(title, monitor, size.width, size.height, &block)
+    end
+
+    # Creates a full screen window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *share* argument is the window whose context to share resources with.
+    #
+    # The width and height of the window match the size of the monitor's current display mode.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.full_screen(title : String, monitor : Monitor, share : Window, &block)
+      size = monitor.size
+      full_screen(title, monitor, width, height, share, &block)
+    end
+
+    # Creates a full screen window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *width* and *height* specify the desired size of the window on the monitor.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
+      Window.full_screen(title, monitor, width, height).tap do |window|
+        window.current!
+        yield window
+      ensure
+        window.destroy!
+      end
+    end
+
+    # Creates a full screen window and its associated OpenGL or OpenGL ES context.
+    # The window is yielded to the block and automatically destroyed when the block completes.
+    # Additionally, the window's context is made current on the calling thread.
+    #
+    # The *title* is the initial, UTF-8 encoded window title.
+    # The *monitor* is the display device to place the fullscreen window on.
+    # The *width* and *height* specify the desired size of the window on the monitor.
+    # The *share* argument is the window whose context to share resources with.
+    #
+    # Possible errors that could be raised are:
+    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
+    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
+    def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
+      Window.full_screen(title, monitor, width, height, share).tap do |window|
+        window.current!
+        yield window
+      ensure
+        window.destroy!
+      end
+    end
+
     # Checks whether the window should be closed.
     #
     # See also: `#closing=`
