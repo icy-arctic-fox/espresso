@@ -1,4 +1,0 @@
-xrandr: Failed to get size of gamma for output screen
-Screen 0: minimum 1 x 1, current 1280 x 720, maximum 1280 x 720
-screen connected 1280x720+0+0 0mm x 0mm
-   1280x720       0.00* 
