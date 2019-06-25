@@ -10,14 +10,6 @@ require "./mouse"
 require "./position"
 require "./scale"
 require "./size"
-require "./window_closing_event"
-require "./window_focus_event"
-require "./window_iconify_event"
-require "./window_maximize_event"
-require "./window_move_event"
-require "./window_refresh_event"
-require "./window_resize_event"
-require "./window_scale_event"
 
 module Espresso
   # Encapsulates both a window and a context.
