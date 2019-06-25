@@ -6,6 +6,7 @@ require "./error_handling"
 require "./event_handling"
 require "./frame_size"
 require "./monitor"
+require "./mouse"
 require "./position"
 require "./scale"
 require "./size"
@@ -560,6 +561,13 @@ module Espresso
       clear_maximize_listeners
       clear_framebuffer_resize_listeners
       clear_scale_listeners
+    end
+
+    # Retrieves the mouse instance for this window.
+    # Even though the system may only have one logical mouse attached,
+    # mouse instances are tied to a window.
+    def mouse
+      Mouse.new(@pointer)
     end
 
     # Checks whether the window should be closed.
