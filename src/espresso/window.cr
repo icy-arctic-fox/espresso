@@ -383,6 +383,19 @@ module Espresso
       Window.new(pointer)
     end
 
+    # Destroys this window and its context.
+    # On calling this method, no further callbacks will be called for this window.
+    #
+    # If the context of this window is current on the main thread,
+    # it is detached before being destroyed.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **Do not** attempt to use the window after it has been destroyed.
+    def destroy!
+      checked { LibGLFW.destroy_window(@pointer) }
+    end
+
     # Checks whether the window should be closed.
     #
     # See also: `#closing=`
