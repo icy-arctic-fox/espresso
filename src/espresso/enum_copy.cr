@@ -8,6 +8,10 @@ module Espresso
         \{% for e in LibGLFW::{{source_name.id}}.constants %}
           \{{e.id}} = LibGLFW::{{source_name.id}}::\{{e.id}}
         \{% end %}
+
+          protected def native
+            LibGLFW::{{source_name.id}}.new(to_i)
+          end
         end
       \{% end %}
     end
