@@ -266,6 +266,19 @@ module Espresso
     # To remove the listener, call `#remove_scale_listener` with the proc returned by this method.
     event scale, WindowScaleEvent, set_window_content_scale_callback
 
+    # Removes all previously registered listeners for all window events.
+    private def remove_all_listeners
+      clear_move_listeners
+      clear_resize_listeners
+      clear_closing_listeners
+      clear_refresh_listeners
+      clear_focus_listeners
+      clear_iconify_listeners
+      clear_maximize_listeners
+      clear_framebuffer_resize_listeners
+      clear_scale_listeners
+    end
+
     # Creates a window object by wrapping a GLFW window pointer.
     protected def initialize(@pointer : LibGLFW::Window)
     end
@@ -393,6 +406,7 @@ module Espresso
     #
     # **Do not** attempt to use the window after it has been destroyed.
     def destroy!
+      remove_all_listeners
       checked { LibGLFW.destroy_window(@pointer) }
     end
 

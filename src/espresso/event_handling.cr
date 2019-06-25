@@ -68,8 +68,13 @@ module Espresso
         return unless listeners.empty?
 
         # No listeners left at this point, clean up.
+        clear_{{name.id}}_listeners
+      end
+
+      # Removes all previously registered listeners that respond to the `#on_{{name.id}}` callback.
+      private def clear_{{name.id}}_listeners : Nil
         @@{{name.id}}_listeners.delete(@pointer)
-        LibGLFW.{{function.id}}(nil)
+        LibGLFW.{{function.id}}(@pointer, nil)
       end
     end
   end
