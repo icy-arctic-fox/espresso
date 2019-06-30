@@ -356,6 +356,11 @@ module Espresso
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::StickyMouseButtons, value) }
     end
 
+    # Retrieves the underlying window pointer.
+    def to_unsafe
+      @pointer
+    end
+
     # Checks whether raw mouse motion is supported on the current system.
     # This status does not change after GLFW has been initialized
     # so you only need to check this once.
