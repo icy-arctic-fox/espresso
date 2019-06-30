@@ -527,6 +527,15 @@ module Espresso
     # To remove the listener, call `#remove_scale_listener` with the proc returned by this method.
     event scale, WindowScaleEvent, set_window_content_scale_callback
 
+    # Registers a listener to respond when when one or more dragged files are dropped on the window.
+    # The block of code passed to this method will be invoked when the event occurs.
+    # A `WindowDropEvent` instance will be passed to the block as an argument,
+    # which contains all relevant information about the event.
+    # To remove the listener, call `#remove_drop_listener` with the proc returned by this method.
+    #
+    # **Wayland:** File drop is currently unimplemented.
+    event drop, WindowDropEvent, set_drop_callback
+
     # Registers a listener to respond when the window is iconified (minimized) or restored from being iconified.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowIconifyEvent` instance will be passed to the block as an argument,
@@ -553,6 +562,7 @@ module Espresso
       clear_maximize_listeners
       clear_framebuffer_resize_listeners
       clear_scale_listeners
+      clear_drop_listeners
       mouse.remove_all_listeners
     end
 
