@@ -1015,6 +1015,25 @@ module Espresso
       checked { LibGLFW.request_window_attention(@pointer) }
     end
 
+    # Retrieves the contents of the system clipboard,
+    # if it contains or is convertible to a UTF-8 encoded string.
+    # If the clipboard is empty or if its contents cannot be converted,
+    # a `FormatUnavailableError` is raised.
+    #
+    # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `FormatUnavailableError`.
+    def clipboard
+      chars = expect_truthy { LibGLFW.get_clipboard_string(@pointer) }
+      String.new(chars)
+    end
+
+    # Sets the contents of the system clipboard,
+    # to the specified UTF-8 encoded *string*.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def clipboard=(string)
+      checked { LibGLFW.set_clipboard_string(@pointer, string) }
+    end
+
     # Attempts to retrieve the monitor the full screen window is using.
     # If the window isn't full screen, then nil is returned.
     #
