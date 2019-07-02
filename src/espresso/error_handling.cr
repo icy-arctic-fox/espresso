@@ -25,7 +25,7 @@ module Espresso
     end
 
     # Checks for errors from GLFW after a method has been called.
-    # Pass a block to this method that calls *one* GLFW method.
+    # Pass a block to this method that calls *one* GLFW function.
     # The value of the block will be returned if no error occurred.
     # Otherwise, the error will be translated and raised.
     private def checked
@@ -38,9 +38,9 @@ module Espresso
     end
 
     # Expects a GLFW function to return a truthy value.
-    # The return value of the method is checked
+    # The return value of the function is checked
     # to be not false, nil, or integer false (zero).
-    # Pass a block to this method that calls *one* GLFW method.
+    # Pass a block to this method that calls *one* GLFW function.
     # The value of the block will be returned if no error occurred.
     # Otherwise, an error will be raised.
     #
@@ -55,6 +55,25 @@ module Espresso
     # Same as `#expect_truthy`, but for static invocations.
     protected def self.static_expect_truthy(&block : -> _)
       expect_truthy(&block)
+    end
+
+    # Expects a GLFW function to not return a specific value.
+    # The return value of the function is checked to be not the given *value*.
+    # Pass a block to this method that calls *one* GLFW function.
+    # The value of the block will be returned if no error occurred.
+    # Otherwise, an error will be raised.
+    #
+    # An exception will be raised only if an error occurred.
+    # The error check will only happen if the block returns *value*.
+    private def expect_not(value)
+      yield.tap do |result|
+        check_error if result == value
+      end
+    end
+
+    # Same as `#expect_not`, but for static invocations.
+    protected def self.static_expect_not(value, &block : -> _)
+      expect_not(&block)
     end
 
     # Creates an error from the given code a description.
