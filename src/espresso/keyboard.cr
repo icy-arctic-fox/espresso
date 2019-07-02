@@ -2,6 +2,7 @@ require "glfw"
 require "./bool_conversion"
 require "./error_handling"
 require "./event_handling"
+require "./key"
 
 module Espresso
   # Information about the keyboard that is associated with a window.
@@ -114,6 +115,95 @@ module Espresso
     # Retrieves the underlying window pointer.
     def to_unsafe
       @pointer
+    end
+
+    # Retrieves the name of the specified printable key, encoded as UTF-8.
+    # This is typically the character that key would produce without any modifier keys,
+    # intended for displaying key bindings to the user.
+    # For dead keys, it is typically the diacritic it would add to a character.
+    #
+    # **Do not use this method** for text input.
+    # You will break text input for many languages even if it happens to work for yours.
+    #
+    # The printable keys are:
+    # - `Key::Apostrohpe`
+    # - `Key::Comma`
+    # - `Key::Minus`
+    # - `Key::Period`
+    # - `Key::Slash`
+    # - `Key::Semicolon`
+    # - `Key::Equal`
+    # - `Key::LeftBracket`
+    # - `Key::RightBracket`
+    # - `Key::Backslash`
+    # - `Key::World1`
+    # - `Key::World2`
+    # - `Key::Num0` to `Key::Num9`
+    # - `Key::A` to `Key::Z`
+    # - `Key::KeyPad0` to `Key::KeyPad9`
+    # - `Key::KeyPadDecimal`
+    # - `Key::KeyPadDivide`
+    # - `Key::KeyPadMultiply`
+    # - `Key::KeyPadSubtract`
+    # - `Key::KeyPadAdd`
+    # - `Key::KeyPadEqual`
+    #
+    # Names for printable keys depend on keyboard layout,
+    # while names for non-printable keys are the same across layouts
+    # but depend on the application language
+    # and should be localized along with other user interface text.
+    #
+    # Returns a string if a name is available for the specified *key*, nil otherwise.
+    def self.key_name?(key : Key)
+      raise ArgumentError.new("Key must be known") if key == Key::Unknown
+
+      key_name?(key, 0)
+    end
+
+    # Retrieves the name of the specified printable key, encoded as UTF-8.
+    # This is typically the character that key would produce without any modifier keys,
+    # intended for displaying key bindings to the user.
+    # For dead keys, it is typically the diacritic it would add to a character.
+    #
+    # **Do not use this method** for text input.
+    # You will break text input for many languages even if it happens to work for yours.
+    #
+    # Names for printable keys depend on keyboard layout,
+    # while names for non-printable keys are the same across layouts
+    # but depend on the application language
+    # and should be localized along with other user interface text.
+    #
+    # Returns a string if a name is available for the specified *scancode*, nil otherwise.
+    def self.key_name?(scancode)
+      key_name?(Key::Unknown, scancode)
+    end
+
+    # Retrieves the name of the specified printable key, encoded as UTF-8.
+    #
+    # If the *key* is `Key::Unknown`, the *scancode* is used to identify the key,
+    # otherwise the *scancode* is ignored.
+    # If you specify a non-printable key, or `Key::Unknown` and a *scancode* that maps to a non-printable key,
+    # this method returns nil but does not raise an error.
+    #
+    # This behavior allows you to always pass in the arguments from the `#on_key` callback without modification.
+    protected def self.key_name?(key : Key, scancode)
+      chars = expect_truthy { LibGLFW.get_key_name(key.native, scancode) }
+      chars ? String.new(chars) : nil
+    end
+
+    # Retrieves the platform-specific scancode of the specified key.
+    #
+    # If the *key* is `Key::Unknown` or does not exist on the keyboard this method will return nil.
+    def self.scancode?(key)
+      scancode = expect_not(-1) { LibGLFW.get_key_scancode(key) }
+      scancode == -1 ? nil : scancode
+    end
+
+    # Retrieves the platform-specific scancode of the specified key.
+    #
+    # If the *key* is `Key::Unknown` or does not exist on the keyboard this method will raise `NilAssertionError`.
+    def self.scancode(key)
+      scancode?(key).not_nil!
     end
   end
 end
