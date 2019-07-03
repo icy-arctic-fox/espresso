@@ -5,6 +5,7 @@ require "./bounds"
 require "./error_handling"
 require "./event_handling"
 require "./frame_size"
+require "./keyboard"
 require "./monitor"
 require "./mouse"
 require "./position"
@@ -564,6 +565,7 @@ module Espresso
       clear_scale_listeners
       clear_drop_listeners
       mouse.remove_all_listeners
+      keyboard.remove_all_listeners
     end
 
     # Retrieves the mouse instance for this window.
@@ -571,6 +573,13 @@ module Espresso
     # mouse instances are tied to a window.
     def mouse
       Mouse.new(@pointer)
+    end
+
+    # Retrieves the keyboard instance for this window.
+    # Even though the system may only have one logical keyboard attached,
+    # keyboard instances are tied to a window.
+    def keyboard
+      Keyboard.new(@pointer)
     end
 
     # Checks whether the window should be closed.
