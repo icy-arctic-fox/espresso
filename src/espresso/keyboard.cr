@@ -24,6 +24,10 @@ module Espresso
     include ErrorHandling
     include EventHandling
 
+    # Creates the keyboard instance from a GLFW window pointer.
+    protected def initialize(@pointer : LibGLFW::Window)
+    end
+
     # Registers a listener to respond when a key is pressed, released, or repeated.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `KeyboardKeyEvent` instance will be passed to the block as an argument,
@@ -77,8 +81,11 @@ module Espresso
     # **Deprecated:** Scheduled for removal in GLFW 4.0.
     event char_mods, KeyboardCharModsEvent, set_char_mods_callback
 
-    # Creates the keyboard instance from a GLFW window pointer.
-    protected def initialize(@pointer : LibGLFW::Window)
+    # Removes all previously registered listeners for all keyboard events.
+    private def remove_all_listeners
+      clear_key_listeners
+      clear_char_listeners
+      clear_char_mods_listeners
     end
 
     # Retrieves the last state reported for the specified key to the associated window.
