@@ -1,7 +1,7 @@
 require "glfw"
 
 module Espresso
-  enum ButtonState
+  enum ButtonState : UInt8
     Released = LibGLFW::Action::Release
     Pressed  = LibGLFW::Action::Press
   end
