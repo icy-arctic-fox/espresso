@@ -82,7 +82,7 @@ module Espresso
     event char_mods, KeyboardCharModsEvent, set_char_mods_callback
 
     # Removes all previously registered listeners for all keyboard events.
-    private def remove_all_listeners
+    protected def remove_all_listeners
       clear_key_listeners
       clear_char_listeners
       clear_char_mods_listeners
