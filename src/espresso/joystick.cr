@@ -228,5 +228,16 @@ module Espresso
     def user_pointer=(pointer)
       checked { LibGLFW.set_joystick_user_pointer(@id, pointer) }
     end
+
+    # Checks whether this joystick is both present and has a gamepad mapping.
+    #
+    # If the specified joystick is present (`#connected?`)
+    # but does not have a gamepad mapping this method will return false
+    # but will not raise an error.
+    # Call `#connected?` to check if a joystick is present regardless of whether it has a mapping.
+    def gamepad?
+      value = expect_truthy { LibGLFW.joystick_is_gamepad(@id) }
+      int_to_bool(value)
+    end
   end
 end
