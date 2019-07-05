@@ -4,6 +4,23 @@ require "./button_state"
 require "./error_handling"
 
 module Espresso
+  # Exposes connected joysticks and controllers, with both referred to as joysticks.
+  # GLFW supports up to sixteen joysticks.
+  # You can test whether a joystick is present/connected with `#connected?`.
+  # To access joysticks, use one of: `#all`, `#each`, `#connected`, or `#each_connected`.
+  #
+  # Each joystick has zero or more axes, zero or more buttons, zero or more hats,
+  # a human-readable name, a user pointer and an SDL compatible GUID.
+  #
+  # When GLFW is initialized, detected joysticks are added to the beginning of the array.
+  # Once a joystick is detected, it keeps its assigned ID until it is disconnected
+  # or the library is terminated, so as joysticks are connected and disconnected,
+  # there may appear gaps in the IDs.
+  #
+  # Joystick axis, button, and hat state is updated when polled
+  # and does not require a window to be created or events to be processed.
+  # However, if you want joystick connection and disconnection events reliably delivered
+  # to the joystick `#on_connect` and `#on_disconnect` events, then you must process events.
   struct Joystick
     include BoolConversion
     include ErrorHandling
