@@ -239,5 +239,18 @@ module Espresso
       value = expect_truthy { LibGLFW.joystick_is_gamepad(@id) }
       int_to_bool(value)
     end
+
+    # String representation of the joystick.
+    def to_s(io)
+      io << @id
+      io << '('
+      io << name
+      io << ')'
+    end
+
+    # Returns the underlying joystick ID.
+    def to_unsafe
+      @id
+    end
   end
 end
