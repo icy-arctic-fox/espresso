@@ -252,5 +252,104 @@ module Espresso
     def to_unsafe
       @id
     end
+
+    # Stores active listeners for connect and disconnect events.
+    # GLFW has only one callback, which is when any joystick connects or disconnects.
+    # But it is split here for end-user convenience.
+    @@class_connect_listeners = [] of self ->
+    @@class_disconnect_listeners = [] of self ->
+    @@disconnect_listeners = {} of LibGLFW::Joystick => Array(self ->)
+
+    # Checks if there are any registered listeners.
+    protected def self.any_listeners?
+      @@class_connect_listeners.any? ||
+        @@class_disconnect_listeners.any? ||
+        @@disconnect_listeners.any?
+    end
+
+    # Method that is called by GLFW when any joystick event occurs.
+    protected def self.joystick_callback(id, event)
+      joystick = Joystick.new(id)
+      case event
+      when LibGLFW::DeviceEvent::Connected
+        # Call all class-level listeners.
+        @@class_connect_listeners.each(&.call(joystick))
+      when LibGLFW::DeviceEvent::Disconnected
+        # Call all class-level listeners.
+        @@class_disconnect_listeners.each(&.call(joystick))
+
+        # Check if there's any instance-level listeners and call them.
+        if (listeners = @@disconnect_listeners[id]?)
+          listeners.each(&.call(joystick))
+
+          # Instance-level disconnect listeners must be handled differently.
+          # When the joystick disconnects, the address/pointer/handle to it is no longer valid.
+          # So all of the listeners for that joystick must be removed.
+          @@disconnect_listeners.delete(joystick)
+        end
+      else
+        raise "Unknown joystick device event - #{event}"
+      end
+    end
+
+    # Registers a listener to respond when a joystick is connected.
+    # The block of code passed to this method will be invoked when a joystick is connected.
+    # The joystick instance will be provided as an argument to the block.
+    # To remove the listener, call `#remove_connect_listener` with the proc returned by this method.
+    def self.on_connect(&block : self ->)
+      LibGLFW.set_joystick_callback(->joystick_callback) unless any_listeners?
+      @@class_connect_listeners << block
+      block
+    end
+
+    # Removes a previously registered listener that responded when a joystick is connected.
+    # The *proc* argument should be the return value of the `#on_connect` method.
+    def self.remove_connect_listener(proc : self ->) : Nil
+      @@class_connect_listeners.delete(proc)
+      LibGLFW.set_joystick_callback(nil) unless any_listeners?
+    end
+
+    # Registers a listener to respond when any joystick is disconnected.
+    # The block of code passed to this method will be invoked when a joystick is disconnected.
+    # The joystick instance will be provided as an argument to the block.
+    # To remove the listener, call `#remove_disconnect_listener` with the proc returned by this method.
+    def self.on_disconnect(&block : self ->)
+      LibGLFW.set_joystick_callback(->joystick_callback) unless any_listeners?
+      @@class_disconnect_listeners << block
+      block
+    end
+
+    # Removes a previously registered listener that responded when a joystick is disconnected.
+    # The *proc* argument should be the return value of the `#on_disconnect` method.
+    def self.remove_disconnect_listener(proc : self ->) : Nil
+      @@class_disconnect_listeners.delete(proc)
+      LibGLFW.set_joystick_callback(nil) unless any_listeners?
+    end
+
+    # Registers a listener to respond when this joystick is disconnected.
+    # The block of code passed to this method will be invoked when the joystick is disconnected.
+    # The joystick instance (this) will be provided as an argument to the block.
+    # To remove the listener, call `#remove_disconnect_listener` with the proc returned by this method.
+    # All registered listeners will be automatically removed
+    # after they have been called and this joystick is disconnected.
+    def on_disconnect(&block : self ->)
+      LibGLFW.set_joystick_callback(->Joystick.joystick_callback) unless Joystick.any_listeners?
+      if (listeners = @@disconnect_listeners[@id]?)
+        listeners << block
+      else
+        @@disconnect_listeners[@id] = [block]
+      end
+      block
+    end
+
+    # Removes a previously registered listener that responded when this joystick is disconnected.
+    # The *proc* argument should be the return value of the `#on_disconnect` method.
+    def remove_disconnect_listener(proc : self ->) : Nil
+      return unless (listeners = @@disconnect_listeners[@id]?)
+
+      listeners.delete(proc)
+      @@disconnect_listeners.delete(@id) if listeners.empty?
+      LibGLFW.set_joystick_callback(nil) unless Joystick.any_listeners?
+    end
   end
 end
