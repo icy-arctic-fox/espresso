@@ -4,6 +4,51 @@ require "./error_handling"
 module Espresso
   # High-resolution time input.
   class Timer
+    @accum = 0u64
+
+    # Indicates whether the timer is currently running.
+    getter? running : Bool
+
+    # Creates and optionally starts a new timer.
+    def initialize(@running = false)
+      @start = Timer.value
+    end
+
+    # Raw value of the current timer.
+    def value
+      running? ? runtime + @accum : @accum
+    end
+
+    # Time elapsed since the start time.
+    private def runtime
+      Timer.value - @start
+    end
+
+    # Starts (or restarts) the timer.
+    # If multiple consecutive calls are made to this method,
+    # then it has the effect of restarting the the current time segment at the last call.
+    # Any previous time accumulated before this call is kept.
+    # Call `#reset` to completely restart the timer to zero.
+    def start
+      @running = true
+      @start = Timer.value
+    end
+
+    # Stops the timer.
+    def stop
+      return unless running?
+
+      @accum += runtime
+      @running = false
+    end
+
+    # Resets the timer back to zero.
+    # The timer will continue running if it already was.
+    def reset
+      @accum = 0u64
+      @start = Timer.value
+    end
+
     # Retrieves the value (in seconds) of the GLFW timer.
     # Unless the timer has been set using `#global=`,
     # the timer measures time elapsed since GLFW was initialized.
@@ -37,7 +82,7 @@ module Espresso
 
     # Frequency, in Hz, of the raw timer.
     #
-    # See also: `#value`.
+    # See also: `Timer#value`.
     def self.frequency
       ErrorHandling.static_expect_not(0u64) { LibGLFW.get_timer_frequency }
     end
