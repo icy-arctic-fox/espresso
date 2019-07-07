@@ -1,5 +1,5 @@
 require "glfw"
-require "error_handling"
+require "./error_handling"
 
 module Espresso
   # High-resolution time input.
