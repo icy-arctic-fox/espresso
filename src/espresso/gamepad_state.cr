@@ -1,5 +1,6 @@
 require "glfw"
 require "./gamepad_button"
+require "./gamepad_axis"
 
 module Espresso
   # Describes the input state of a gamepad.
