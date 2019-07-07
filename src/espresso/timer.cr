@@ -73,6 +73,18 @@ module Espresso
       value.to_f64 / (Timer.frequency / 1_000f64)
     end
 
+    # Creates a `Time::Span` from the timer's value.
+    def span
+      Time::Span.new(nanoseconds: nanoseconds.to_i64)
+    end
+
+    # Measures how long a block takes to execute and returns a time span.
+    def self.measure
+      timer = Timer.new(true)
+      yield
+      timer.span
+    end
+
     # Retrieves the value (in seconds) of the GLFW timer.
     # Unless the timer has been set using `#global=`,
     # the timer measures time elapsed since GLFW was initialized.
