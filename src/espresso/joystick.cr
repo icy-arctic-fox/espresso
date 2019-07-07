@@ -2,6 +2,7 @@ require "glfw"
 require "./bool_conversion"
 require "./button_state"
 require "./error_handling"
+require "./gamepad_state"
 
 module Espresso
   struct Joystick
@@ -238,6 +239,30 @@ module Espresso
     def gamepad?
       value = expect_truthy { LibGLFW.joystick_is_gamepad(@id) }
       int_to_bool(value)
+    end
+
+    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    #
+    # If the specified joystick is not present or does not have a gamepad mapping
+    # this method will return nil, but will not raise an error.
+    # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
+    #
+    # See also: `#gamepad?`
+    def state?
+      state = uninitialized LibGLFW::GamepadState
+      result = expect_truthy { LibGLFW.get_gamepad_state(@id, pointerof(state)) }
+      int_to_bool(result) ? GamepadState.new(state) : nil
+    end
+
+    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    #
+    # If the specified joystick is not present or does not have a gamepad mapping
+    # an error will be raised.
+    # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
+    #
+    # See also: `#gamepad?`
+    def state
+      state?.not_nil!
     end
 
     # String representation of the joystick.
