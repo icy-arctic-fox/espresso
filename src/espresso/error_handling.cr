@@ -73,7 +73,7 @@ module Espresso
 
     # Same as `#expect_not`, but for static invocations.
     protected def self.static_expect_not(value, &block : -> _)
-      expect_not(&block)
+      expect_not(value, &block)
     end
 
     # Creates an error from the given code a description.
