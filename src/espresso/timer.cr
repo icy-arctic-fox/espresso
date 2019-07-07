@@ -5,6 +5,7 @@ module Espresso
   # High-resolution time input.
   class Timer
     @accum = 0u64
+    @start = 0u64
 
     # Indicates whether the timer is currently running.
     getter? running : Bool
@@ -47,6 +48,29 @@ module Espresso
     def reset
       @accum = 0u64
       @start = Timer.value
+    end
+
+    # Total elapsed time in seconds.
+    def seconds
+      value.to_f64 / Timer.frequency
+    end
+
+    # Total elapsed time in nanoseconds (10^-9).
+    # Might be rounded depending on the system's precision.
+    def nanoseconds
+      value.to_f64 / (Timer.frequency / 1_000_000_000f64)
+    end
+
+    # Total elapsed time in microseconds (10^-6).
+    # Might be rounded depending on the system's precision.
+    def microseconds
+      value.to_f64 / (Timer.frequency / 1_000_000f64)
+    end
+
+    # Total elapsed time in milliseconds (10^-3).
+    # Might be rounded depending on the system's precision.
+    def milliseconds
+      value.to_f64 / (Timer.frequency / 1_000f64)
     end
 
     # Retrieves the value (in seconds) of the GLFW timer.
