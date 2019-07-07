@@ -265,6 +265,20 @@ module Espresso
       state?.not_nil!
     end
 
+    # Parses the specified ASCII encoded *string* and updates the internal list with any gamepad mappings it finds.
+    # This string may contain either a single gamepad mapping or many mappings separated by newlines.
+    # The parser supports the full format of the `gamecontrollerdb.txt` source file including empty lines and comments.
+    #
+    # See [Gamepad mappings](https://www.glfw.org/docs/latest/input_guide.html#gamepad_mapping)
+    # for a description of the format.
+    #
+    # If there is already a gamepad mapping for a given GUID in the internal list,
+    # it will be replaced by the one passed to this function.
+    # If the library is terminated and re-initialized the internal list will revert to the built-in default.
+    def self.update_gamepad_mappings(string) : Nil
+      expect_truthy { LibGLFW.update_gamepad_mappings(string) }
+    end
+
     # String representation of the joystick.
     def to_s(io)
       io << @id
