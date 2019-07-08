@@ -14,6 +14,9 @@ development_dependencies:
   opengl:
     gitlab: arctic-fox/opengl.cr
     branch: gl-3.3-core
+  ameba:
+    github: veelenga/ameba
+    version: ~> 0.9
 
 dependencies:
   glfw:

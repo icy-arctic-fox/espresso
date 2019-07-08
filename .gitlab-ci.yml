@@ -23,6 +23,7 @@ spec:
     - shards
   script:
     - crystal spec
+    - bin/ameba
     - crystal tool format --check
   cache:
     paths:
