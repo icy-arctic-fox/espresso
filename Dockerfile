@@ -31,7 +31,7 @@ RUN git clone -b $GLFW_VERSION https://github.com/glfw/glfw.git && \
   cd glfw && \
   mkdir build && \
   cd build && \
-  cmake -DCMAKE_BUILD_TYPE=Release .. && \
+  cmake -DCMAKE_BUILD_TYPE=Release -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF .. && \
   cmake --build . --target install && \
   cd ../.. && \
   rm -rf glfw
