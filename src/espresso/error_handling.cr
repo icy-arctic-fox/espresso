@@ -79,6 +79,8 @@ module Espresso
     # Creates an error from the given code a description.
     # The *code* indicates which type of error to create.
     # The *description* is the character array provided by GLFW.
+    #
+    # ameba:disable Metrics/CyclomaticComplexity
     private def translate_error(code, description)
       klass = case code
               when LibGLFW::ErrorCode::NotInitialized     then NotInitializedError
