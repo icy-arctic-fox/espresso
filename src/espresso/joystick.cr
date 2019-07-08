@@ -2,6 +2,7 @@ require "glfw"
 require "./bool_conversion"
 require "./button_state"
 require "./error_handling"
+require "./gamepad_state"
 
 module Espresso
   # Exposes connected joysticks and controllers, with both referred to as joysticks.
@@ -255,6 +256,44 @@ module Espresso
     def gamepad?
       value = expect_truthy { LibGLFW.joystick_is_gamepad(@id) }
       int_to_bool(value)
+    end
+
+    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    #
+    # If the specified joystick is not present or does not have a gamepad mapping
+    # this method will return nil, but will not raise an error.
+    # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
+    #
+    # See also: `#gamepad?`
+    def state?
+      state = uninitialized LibGLFW::GamepadState
+      result = expect_truthy { LibGLFW.get_gamepad_state(@id, pointerof(state)) }
+      int_to_bool(result) ? GamepadState.new(state) : nil
+    end
+
+    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    #
+    # If the specified joystick is not present or does not have a gamepad mapping
+    # an error will be raised.
+    # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
+    #
+    # See also: `#gamepad?`
+    def state
+      state?.not_nil!
+    end
+
+    # Parses the specified ASCII encoded *string* and updates the internal list with any gamepad mappings it finds.
+    # This string may contain either a single gamepad mapping or many mappings separated by newlines.
+    # The parser supports the full format of the `gamecontrollerdb.txt` source file including empty lines and comments.
+    #
+    # See [Gamepad mappings](https://www.glfw.org/docs/latest/input_guide.html#gamepad_mapping)
+    # for a description of the format.
+    #
+    # If there is already a gamepad mapping for a given GUID in the internal list,
+    # it will be replaced by the one passed to this function.
+    # If the library is terminated and re-initialized the internal list will revert to the built-in default.
+    def self.update_gamepad_mappings(string) : Nil
+      expect_truthy { LibGLFW.update_gamepad_mappings(string) }
     end
 
     # String representation of the joystick.
