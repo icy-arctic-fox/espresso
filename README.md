@@ -153,13 +153,13 @@ TODO: Provide examples for working with errors.
 Documentation is automatically generated and published [here](https://arctic-fox.gitlab.io/espresso/).
 The primary pages you will be interested in are:
 
-- [Espresso](https://arctic-fox.gitlab.io/espresso/Espresso.html)
-- [Window](https://arctic-fox.gitlab.io/espresso/Espresso/Window.html)
-- [WindowBuilder](https://arctic-fox.gitlab.io/espresso/Espresso/WindowBuilder.html)
-- [Keyboard](https://arctic-fox.gitlab.io/espresso/Espresso/Keyboard.html)
-- [Mouse](https://arctic-fox.gitlab.io/espresso/Espresso/Mouse.html)
-- [Joystick](https://arctic-fox.gitlab.io/espresso/Espresso/Joystick.html)
-- [Monitor](https://arctic-fox.gitlab.io/espresso/Espresso/Monitor.html)
+- [Espresso](Espresso.html)
+- [Window](Espresso/Window.html)
+- [WindowBuilder](Espresso/WindowBuilder.html)
+- [Keyboard](Espresso/Keyboard.html)
+- [Mouse](Espresso/Mouse.html)
+- [Joystick](Espresso/Joystick.html)
+- [Monitor](Espresso/Monitor.html)
 
 ## Development
 
