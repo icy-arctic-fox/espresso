@@ -14,7 +14,7 @@ require "./size"
 
 module Espresso
   # Encapsulates both a window and a context.
-  # Windows can be created with the `#initialize` and `#full_screen` methods.
+  # Windows can be created with the `#new` and `#full_screen` methods.
   # As the window and context are inseparably linked,
   # the underlying object pointer is used as both a context and window handle.
   #
