@@ -1543,5 +1543,33 @@ module Espresso
     def self.post_empty_event
       ErrorHandling.static_checked { LibGLFW.post_empty_event }
     end
+
+    # Sets the swap interval for the current OpenGL or OpenGL ES context,
+    # i.e. the number of screen updates to wait from the time `#swap_buffers` was called
+    # before swapping the buffers and returning.
+    # This is sometimes called vertical synchronization,
+    # vertical retrace synchronization, or just vsync.
+    #
+    # A context that supports either of the `WGL_EXT_swap_control_tear` and `GLX_EXT_swap_control_tear` extensions
+    # also accepts negative swap intervals,
+    # which allows the driver to swap immediately even if a frame arrives a little bit late.
+    # You can check for these extensions with `Espresso#extension_supported?`.
+    #
+    # A context must be current on the calling thread.
+    # Calling this method without a current context will raise `NoCurrentContextError`.
+    #
+    # This method does not apply to Vulkan.
+    # If you are rendering with Vulkan, see the present mode of your swapchain instead.
+    #
+    # This method is not called during context creation,
+    # leaving the swap interval set to whatever is the default on that platform.
+    # This is done because some swap interval extensions used by GLFW
+    # do not allow the swap interval to be reset to zero once it has been set to a non-zero value.
+    #
+    # Some GPU drivers do not honor the requested swap interval,
+    # either because of a user setting that overrides the application's request or due to bugs in the driver.
+    def self.swap_interval=(interval)
+      ErrorHandling.static_checked { LibGLFW.swap_interval(interval) }
+    end
   end
 end
