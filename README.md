@@ -91,11 +91,62 @@ This provides a friendlier object-oriented approach without sacrificing speed.
 
 ### Windows
 
-TODO: Provide examples for working with windows.
+Windows are the biggest part of GLFW.
+As such, there is a lot of functionality put behind them.
+The easiest way to get a window in Espresso, is to call
+[`Window.open`](Espresso/Window.html#open%28width%3AInt32%2Cheight%3AInt32%2Ctitle%3AString%2C%26block%29-class-method)
+or
+[`Window.full_screen`](Espresso/Window.html#full_screen%28title%3AString%2C%26block%29-class-method).
+A block can be provided to these methods.
+When present, Espresso will automatically make the window's context current and ensure proper cleanup of its resources.
+Without a block, use
+[`Window.new`](Espresso/Window.html#new%28width%3AInt32%2Cheight%3AInt32%2Ctitle%3AString%29-class-method)
+or
+[`Window.full_screen`](Espresso/Window.html#full_screen%28title%3AString%29-class-method).
+These methods simply return a [`Window`](Espresso/Window.html) instance.
+
+```crystal
+# For windowed mode.
+Espresso::Window.open(800, 600, "Espresso") do
+  # Use the window here.
+end
+
+# For full-screen mode.
+Espresso::Window.full_screen("Espresso") do
+  # Use the window here.
+end
+
+# Alternatively, without the block form:
+window = Espresso::Window.new(800, 600, "Espresso")
+# or for full screen...
+window = Espresso::Window.full_screen("Espresso")
+# Make sure to set the context and destroy when done.
+window.current!
+window.destroy!
+```
+
+You may want to customize the window before creating it.
+To do so, use [`WindowBuilder`](Espresso/WindowBuilder.html).
+Use one of the `build_*` methods to create the window.
+
+```crystal
+builder = Espresso::WindowBuilder.new
+builder.context_version(3, 3)
+builder.resizable = false
+window = builder.build(800, 600, "Espresso")
+```
 
 ### Input
 
 TODO: Provide examples for working with input.
+
+### Events
+
+TODO: Provide examples for working with events.
+
+### Errors
+
+TODO: Provide examples for working with errors.
 
 ## Documentation
 
