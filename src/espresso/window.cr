@@ -606,8 +606,38 @@ module Espresso
       checked { LibGLFW.set_window_title(@pointer, title) }
     end
 
-    def icon=(icon)
-      raise NotImplementedError.new("Window#icon=")
+    # Sets the icon of this window.
+    # If passed an array of candidate images,
+    # those of or closest to the sizes desired by the system are selected.
+    # If no images are specified, the window reverts to its default icon.
+    #
+    # The array of *images* should be a set of `Image` instances.
+    #
+    # The desired image sizes varies depending on platform and system settings.
+    # The selected images will be rescaled as needed.
+    # Good sizes include 16x16, 32x32 and 48x48.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    #
+    # **macOS:** The GLFW window has no icon,
+    # as it is not a document window, so this method does nothing.
+    # The dock icon will be the same as the application bundle's icon.
+    # For more information on bundles, see the [Bundle Programming Guide](https://developer.apple.com/library/mac/documentation/CoreFoundation/Conceptual/CFBundles/)
+    # in the Mac Developer Library.
+    #
+    # **Wayland:** There is no existing protocol to change an icon,
+    # the window will thus inherit the one defined in the application's desktop file.
+    # This method always raises `PlatformError`.
+    def icon=(images)
+      icon = images.map(&.to_unsafe)
+      checked { LibGLFW.set_window_icon(@pointer, icon.size, icon) }
+    end
+
+    # Resets the window's icon to the default icon.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def reset_icon
+      checked { LibGLFW.set_window_icon(@pointer, 0, nil) }
     end
 
     # Retrieves the position, in screen coordinates, of the upper-left corner

@@ -44,7 +44,7 @@ module Espresso
     {% for name in CursorShape.constants %}
     # Creates a standard {{name}} cursor shape.
     def self.{{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-            .gsub(/([a-z\d])([A-Z])/, "\\1_\\2").downcase}}
+                 .gsub(/([a-z\d])([A-Z])/, "\\1_\\2").downcase}}
       standard(CursorShape::{{name}})
     end
     {% end %}
