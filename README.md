@@ -138,15 +138,78 @@ window = builder.build(800, 600, "Espresso")
 
 ### Input
 
-TODO: Provide examples for working with input.
+Most input types are tied to GLFW windows.
+To access them, use
+[`Window#mouse`](https://arctic-fox.gitlab.io/espresso/Espresso/Window.html#mouse-instance-method) and
+[`Window#keyboard`](https://arctic-fox.gitlab.io/espresso/Espresso/Window.html#keyboard-instance-method).
+For joystick input, use the [`Joystick`](https://arctic-fox.gitlab.io/espresso/Espresso/Joystick.html)
+type, since it isn't tied to a window.
 
 ### Events
 
-TODO: Provide examples for working with events.
+If you're familiar with how GLFW handles events,
+you'll know that it uses callbacks like `glfwSetKeyCallback`.
+However, Espresso changes how event callbacks are exposed.
+Instead of setting a single callback for an event, Espresso allows setting multiple.
+Additionally, native blocks and closures can be used (which isn't allowed with normal C callbacks).
+Registering an event listener in Espresso is as easy as passing a  block to any `#on_*` method.
+
+```crystal
+window.keyboard.on_key do |event|
+  # The `event` argument contains all event information.
+  puts "Key #{event.pressed? ? "pressed" : "released"} #{event.key}"
+end
+```
+
+To remove a callback at a later point in time, call the corresponding `#remove_*_listener`.
+The `#on_*` method returns a proc, which needs to be passed to the `#remove_*_listener`.
+Removing a listener is optional - they will automatically be cleaned up when the resource they're tied to is destroyed.
+
+```crystal
+proc = window.keyboard.on_key do |event|
+  # ...
+end
+
+# ...
+
+window.keyboard.remove_key_listener(proc)
+```
+
+Events are typically tied to an instance, but some events aren't (or can't be) tied to an instance.
+Those exceptions are the `#on_connect` events for monitors and joysticks.
+Listeners can be set up for disconnect of all monitors and joysticks, or just one instance.
+
+```crystal
+Espresso::Monitor.on_connect do |monitor|
+  # New monitor connected.
+end
+
+Espresso::Monitor.on_disconnect do |monitor|
+  # Monitor disconnected.
+end
+
+# The instance-specific variant.
+# This is only invoked for the monitor instance it is associated with.
+monitor = Espresso::Monitor.primary
+monitor.on_disconnect do |monitor|
+  # Called when the primary monitor is disconnected.
+end
+```
 
 ### Errors
 
-TODO: Provide examples for working with errors.
+GLFW errors have been changed to exceptions in Espresso.
+All calls that could possibly cause an error are wrapped and checks handled by Espresso.
+If GLFW reports an error, it will be raised from within Espresso (as to not break out of the stack).
+All errors inherit from a base [`GLFWError`](https://arctic-fox.gitlab.io/espresso/Espresso/GLFWError.html) class.
+
+```crystal
+begin
+  window.resize(800, 600)
+rescue ex : Espresso::PlatformError
+  # Handle error.
+end
+```
 
 ## Documentation
 
