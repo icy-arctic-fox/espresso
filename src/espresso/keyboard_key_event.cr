@@ -41,5 +41,15 @@ module Espresso
     def key_name?
       Keyboard.key_name?(@key, @scancode)
     end
+
+    # Indicates whether the key was pressed.
+    def pressed?
+      state.pressed?
+    end
+
+    # Indicates whether the key was released.
+    def released?
+      state.released?
+    end
   end
 end
