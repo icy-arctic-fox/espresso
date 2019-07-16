@@ -246,8 +246,21 @@ module Espresso
       checked { LibGLFW.set_cursor_pos(@pointer, x, y) }
     end
 
+    # Sets the cursor image to be used when the cursor is over the content area of the associated window.
+    # The set cursor will only be visible when the cursor `#mode` is `CursorMode::Normal`.
+    #
+    # On some platforms, the set cursor may not be visible unless the window also has input focus.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def cursor=(cursor)
-      raise NotImplementedError.new("Mouse#cursor=")
+      checked { LibGLFW.set_cursor(@pointer, cursor) }
+    end
+
+    # Resets the cursor for the associated window back to the default arrow.
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def reset_cursor
+      checked { LibGLFW.set_cursor(@pointer, nil) }
     end
 
     # Retrieves the current cursor mode for the mouse.
