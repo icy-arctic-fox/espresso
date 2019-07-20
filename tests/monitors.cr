@@ -3,7 +3,7 @@ require "option_parser"
 require "../src/espresso"
 
 enum Mode
-  List,
+  List
   Test
 end
 
