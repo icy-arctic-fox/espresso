@@ -31,9 +31,9 @@ module Espresso
     # Creates the keyboard event.
     protected def initialize(pointer, key, @scancode, action, mods)
       super(pointer)
-      @key = Key.from_value(key.to_i)
-      @state = KeyState.from_value(action.to_i)
-      @mods = ModifierKey.from_value(mods.to_i)
+      @key = Key.new(key.to_i)
+      @state = KeyState.new(action.to_i)
+      @mods = ModifierKey.new(mods.to_i)
     end
 
     # Retrieves the name of the key, encoded as UTF-8.

@@ -15,7 +15,7 @@ module Espresso
     protected def initialize(pointer, codepoint, mods)
       super(pointer)
       @char = codepoint.unsafe_chr
-      @mods = ModifierKey.from_value(mods.to_i)
+      @mods = ModifierKey.new(mods.to_i)
     end
   end
 end

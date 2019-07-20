@@ -105,7 +105,7 @@ module Espresso
     # **Do not use this method** to implement text input.
     def key(key)
       value = expect_truthy { LibGLFW.get_key(@pointer, key) }
-      KeyState.from_value(value.to_i)
+      KeyState.new(value.to_i)
     end
 
     # Determines whether the last state reported for the specified key is pressed.

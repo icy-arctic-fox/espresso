@@ -76,7 +76,7 @@ module Espresso
     # even if that mouse button has already been released.
     def button(button : MouseButton)
       action = expect_truthy { LibGLFW.get_mouse_button(@pointer, button.native) }
-      ButtonState.from_value(action.to_i)
+      ButtonState.new(action.to_i)
     end
 
     # Determines whether the last state reported for the specified mouse button is pressed.

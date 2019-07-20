@@ -18,9 +18,9 @@ module Espresso
     # Creates the mouse event.
     protected def initialize(pointer, button, action, mods)
       super(pointer)
-      @button = MouseButton.from_value(button.to_i)
-      @state = ButtonState.from_value(action.to_i)
-      @modifiers = ModifierKey.from_value(mods.to_i)
+      @button = MouseButton.new(button.to_i)
+      @state = ButtonState.new(action.to_i)
+      @modifiers = ModifierKey.new(mods.to_i)
     end
 
     # Indicates whether the left (primary) mouse button was involved.
