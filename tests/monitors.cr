@@ -1,3 +1,6 @@
+# This file is derived from the `monitors.c` in the GLFW repository.
+# https://github.com/glfw/glfw/blob/3.3/tests/monitors.c
+
 require "opengl"
 require "option_parser"
 require "../src/espresso"
