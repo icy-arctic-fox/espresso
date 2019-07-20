@@ -1,9 +1,10 @@
 require "opengl"
+require "option_parser"
 require "../src/espresso"
 
-def usage
-  puts "Usage: monitors [-t]"
-  puts "       monitors -h"
+enum Mode
+  List,
+  Test
 end
 
 def list_modes(monitor)
@@ -101,7 +102,23 @@ end
 
 Espresso.run do
   Espresso::Monitor.all.each do |monitor|
-    list_modes(monitor)
-    # test_modes(monitor)
+    mode = Mode::List
+    OptionParser.parse! do |parser|
+      parser.on("-t", "Test mode") { mode = Mode::Test }
+      parser.on("-h", "Display help") do
+        puts parser
+        exit
+      end
+      parser.invalid_option do
+        puts parser
+        exit(1)
+      end
+    end
+
+    if mode == Mode::List
+      list_modes(monitor)
+    elsif mode == Mode::Test
+      test_modes(monitor)
+    end
   end
 end
