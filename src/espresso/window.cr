@@ -1065,6 +1065,17 @@ module Espresso
       String.new(chars)
     end
 
+    # Retrieves the contents of the system clipboard,
+    # if it contains or is convertible to a UTF-8 encoded string.
+    # If the clipboard is empty or if its contents cannot be converted,
+    # nil is returned..
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def clipboard?
+      chars = LibGLFW.get_clipboard_string(@pointer)
+      chars ? String.new(chars) : nil
+    end
+
     # Sets the contents of the system clipboard,
     # to the specified UTF-8 encoded *string*.
     #
@@ -1090,6 +1101,17 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.clipboard=(string)
       ErrorHandling.static_checked { LibGLFW.set_clipboard_string(nil, string) }
+    end
+
+    # Retrieves the contents of the system clipboard,
+    # if it contains or is convertible to a UTF-8 encoded string.
+    # If the clipboard is empty or if its contents cannot be converted,
+    # nil is returned..
+    #
+    # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
+    def self.clipboard?
+      chars = LibGLFW.get_clipboard_string(nil)
+      chars ? String.new(chars) : nil
     end
 
     # Attempts to retrieve the monitor the full screen window is using.

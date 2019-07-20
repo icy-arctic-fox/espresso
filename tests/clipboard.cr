@@ -22,17 +22,16 @@ Espresso.run do
         event.window.closing = true
       when Espresso::Key::V
         if event.mods == MODIFIER
-          begin
-            string = event.window.clipboard
+          if (string = Espresso::Window.clipboard?)
             puts "Clipboard contains \"#{string}\""
-          rescue Espresso::FormatUnavailableError
+          else
             puts "Clipboard does not contain a string"
           end
         end
       when Espresso::Key::C
         if event.mods == MODIFIER
           string = "Hello GLFW World!"
-          event.window.clipboard = string
+          Espresso::Window.clipboard = string
           puts "Setting clipboard to \"#{string}\""
         end
       end
