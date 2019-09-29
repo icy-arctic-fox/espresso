@@ -8,7 +8,7 @@ module Espresso
   # If it's encountered, it's probably a bug in Espresso and should be reported.
   class InvalidEnumError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::InvalidEnum
     end
   end

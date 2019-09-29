@@ -18,9 +18,9 @@ Spectator.describe Espresso::GammaRamp do
       # Populate with "random" values.
       # The hash of the index is used as the value.
       subject.size.times do |index|
-        subject.red[index] = (index + 1).hash.to_u16
-        subject.green[index] = (index + 2).hash.to_u16
-        subject.blue[index] = (index + 3).hash.to_u16
+        subject.red[index] = (index + 1).hash.to_u16!
+        subject.green[index] = (index + 2).hash.to_u16!
+        subject.blue[index] = (index + 3).hash.to_u16!
       end
     end
 

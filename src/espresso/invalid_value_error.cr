@@ -9,7 +9,7 @@ module Espresso
   # will instead raise `VersionUnavailableError`.
   class InvalidValueError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::InvalidValue
     end
   end

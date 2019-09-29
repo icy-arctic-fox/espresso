@@ -19,7 +19,7 @@ module Espresso
   # ```
   class NoCurrentContextError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::NoCurrentContext
     end
   end

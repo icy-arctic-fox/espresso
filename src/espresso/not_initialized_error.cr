@@ -19,7 +19,7 @@ module Espresso
   # ```
   class NotInitializedError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::NotInitialized
     end
   end

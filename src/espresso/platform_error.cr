@@ -9,7 +9,7 @@ module Espresso
   # - Lack of required resources
   class PlatformError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::PlatformError
     end
   end

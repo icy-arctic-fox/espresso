@@ -18,7 +18,7 @@ module Espresso
   # ignore the error or report it to the user, as appropriate.
   class FormatUnavailableError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::FormatUnavailable
     end
   end

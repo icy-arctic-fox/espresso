@@ -16,7 +16,7 @@ module Espresso
   # - Older graphics drivers do not support Vulkan.
   class APIUnavailableError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::APIUnavailable
     end
   end

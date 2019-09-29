@@ -6,7 +6,7 @@ module Espresso
   # A function was called that requires the specified window to have a context.
   class NoWindowContextError < GLFWError
     # Underlying value that represents the error type.
-    def code
+    def code : LibGLFW::ErrorCode
       LibGLFW::ErrorCode::NoWindowContext
     end
   end
