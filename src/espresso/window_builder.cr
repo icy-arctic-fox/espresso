@@ -22,8 +22,8 @@ module Espresso
     # The setter method name is derived from *name*.
     private macro bool_hint(name)
       {% method_name = name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/_GL/, "GL").downcase %}
+           .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
+           .gsub(/_GL/, "GL").downcase %}
 
       def {{method_name}}=(flag)
         value = bool_to_int(flag).to_i
