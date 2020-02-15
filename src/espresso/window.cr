@@ -1119,7 +1119,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError`.
     def monitor?
-      pointer = expect_truthy { LibGLFW.get_monitor_window(@pointer) }
+      pointer = expect_truthy { LibGLFW.get_window_monitor(@pointer) }
       pointer ? Monitor.new(pointer) : nil
     end
 
