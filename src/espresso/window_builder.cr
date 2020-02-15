@@ -21,11 +21,17 @@ module Espresso
     # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
     # The setter method name is derived from *name*.
     private macro bool_hint(name)
-      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
+      {% method_name = name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
               .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/_GL/, "GL").downcase}}=(flag)
+              .gsub(/_GL/, "GL").downcase %}
+              
+      def {{method_name}}=(flag)
         value = bool_to_int(flag).to_i
         @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value)
+      end
+
+      def {{method_name}}
+        self.method_name = true
       end
     end
 
