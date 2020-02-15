@@ -24,7 +24,7 @@ module Espresso
       def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
               .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
               .gsub(/_GL/, "GL").downcase}}=(flag)
-        value = bool_to_int(flag)
+        value = bool_to_int(flag).to_i
         @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value)
       end
     end
