@@ -4,20 +4,20 @@ version: 0.1.4
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
 
-crystal: 0.33.0
+crystal: 0.36.1
 
 license: MIT
 
 development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
-    branch: master
+    version: ~> 0.9.32
   opengl:
     gitlab: arctic-fox/opengl.cr
     branch: gl-3.3-core
   ameba:
-    github: veelenga/ameba
-    version: ~> 0.9
+    github: crystal-ameba/ameba
+    version: ~> 0.13.4
 
 dependencies:
   glfw:
