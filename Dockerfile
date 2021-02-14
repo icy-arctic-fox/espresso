@@ -21,10 +21,7 @@ RUN apt-get update -y && \
   fluxbox
 
 # Install Crystal.
-RUN curl -sL "https://keybase.io/crystal/pgp_keys.asc" | apt-key add - && \
-  echo "deb https://dist.crystal-lang.org/apt crystal main" | tee /etc/apt/sources.list.d/crystal.list && \
-  apt-get update -y && \
-  apt-get install -y crystal
+RUN curl -fsSL https://crystal-lang.org/install.sh | bash
 
 # Build and install GLFW.
 RUN git clone -b $GLFW_VERSION https://github.com/glfw/glfw.git && \
