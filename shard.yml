@@ -1,5 +1,5 @@
 name: espresso
-version: 0.1.6
+version: 0.1.7
 
 authors:
   - Michael Miller <icy.arctic.fox@gmail.com>
@@ -11,18 +11,18 @@ license: MIT
 development_dependencies:
   spectator:
     gitlab: arctic-fox/spectator
-    version: ~> 0.9.32
+    version: ~> 0.9.33
   opengl:
     gitlab: arctic-fox/opengl.cr
     branch: gl-3.3-core
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.13.4
+    version: ~> 0.14.1
 
 dependencies:
   glfw:
     gitlab: arctic-fox/glfw.cr
-    version: ~> 3.3.0
+    version: ~> 3.3.1
 
 libraries:
   glfw3: ~> 3.3.2
