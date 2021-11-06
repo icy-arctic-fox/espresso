@@ -29,7 +29,7 @@ module Espresso
   #
   # macOS specific hints:
   #
-  # *cocoa_chdir_resources* pecifies whether to set the current directory
+  # *cocoa_chdir_resources* specifies whether to set the current directory
   # to the application to the Contents/Resources subdirectory of the application's bundle, if present.
   #
   # *cocoa_menubar* specifies whether to create a basic menu bar, either from a nib or manually,

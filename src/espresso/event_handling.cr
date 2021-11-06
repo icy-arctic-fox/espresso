@@ -1,7 +1,7 @@
 require "glfw"
 
 module Espresso
-  # Mix-in to provide a macro for defining evenets and callbacks.
+  # Mix-in to provide a macro for defining events and callbacks.
   # Exposes a single macro named `#event`.
   # This module can only be used on types that:
   # 1. Use `LibGLFW::Window`.

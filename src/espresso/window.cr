@@ -93,7 +93,7 @@ module Espresso
   # for OS X in the Mac Developer Library.
   #
   # **macOS:** When activating frame autosaving with `WindowBuilder#cocoa_frame_name=`,
-  # the specified window size and position may be overriden by previously saved values.
+  # the specified window size and position may be overridden by previously saved values.
   #
   # **X11:** Some window managers will not respect the placement of initially hidden windows.
   #
@@ -206,7 +206,7 @@ module Espresso
     # The *height* argument is the desired height, in screen coordinates, of the window.
     # This must be greater than zero.
     # The *title* is the initial, UTF-8 encoded window title.
-    # The *share* argument is the window shose context to share resources with.
+    # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
@@ -340,7 +340,7 @@ module Espresso
     # The *height* argument is the desired height, in screen coordinates, of the window.
     # This must be greater than zero.
     # The *title* is the initial, UTF-8 encoded window title.
-    # The *share* argument is the window shose context to share resources with.
+    # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,

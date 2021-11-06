@@ -40,7 +40,7 @@ module Espresso
     end
 
     # Iterates through all possible joysticks, connected and disconnected.
-    # The joystick is yieled to the block.
+    # The joystick is yielded to the block.
     def self.each
       LibGLFW::Joystick.each do |id|
         yield Joystick.new(id)
@@ -53,7 +53,7 @@ module Espresso
     end
 
     # Iterates through all connected joysticks.
-    # The joystick is yieled to the block.
+    # The joystick is yielded to the block.
     def self.each_connected
       each do |joystick|
         yield joystick if joystick.connected?
@@ -258,7 +258,7 @@ module Espresso
       int_to_bool(value)
     end
 
-    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    # Retrieves the state of the specified joystick remapped to an Xbox-like gamepad.
     #
     # If the specified joystick is not present or does not have a gamepad mapping
     # this method will return nil, but will not raise an error.
@@ -271,7 +271,7 @@ module Espresso
       int_to_bool(result) ? GamepadState.new(state) : nil
     end
 
-    # Retrives the state of the specified joystick remapped to an Xbox-like gamepad.
+    # Retrieves the state of the specified joystick remapped to an Xbox-like gamepad.
     #
     # If the specified joystick is not present or does not have a gamepad mapping
     # an error will be raised.

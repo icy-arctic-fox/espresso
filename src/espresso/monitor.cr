@@ -78,7 +78,7 @@ module Espresso
       end
     end
 
-    # Physical size of a monitor in millimetres, or an estimation of it.
+    # Physical size of a monitor in millimeters, or an estimation of it.
     #
     # While this can be used to calculate the raw DPI of a monitor, this is often not useful.
     # Instead use `#content_scale` and `Window#content_scale` to scale your content.
@@ -188,7 +188,7 @@ module Espresso
 
     # Retrieves the current gamma ramp for the monitor.
     #
-    # On Wayland, gamma handling is a priviledged protocol,
+    # On Wayland, gamma handling is a privileged protocol,
     # and this method will always raise `PlatformError`.
     #
     # Can raise a `PlatformError`.
@@ -211,7 +211,7 @@ module Espresso
     #
     # The size of the specified gamma ramp should match the size of the current ramp for this monitor.
     # On Windows, the gamma ramp size must be 256.
-    # On Wayland, gamma handling is a priviledged protocol,
+    # On Wayland, gamma handling is a privileged protocol,
     # and this method will always raise `PlatformError`.
     #
     # Can raise a `PlatformError`.

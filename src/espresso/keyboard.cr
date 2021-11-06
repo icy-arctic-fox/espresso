@@ -186,7 +186,7 @@ module Espresso
     # You will break text input for many languages even if it happens to work for yours.
     #
     # The printable keys are:
-    # - `Key::Apostrohpe`
+    # - `Key::Apostrophe`
     # - `Key::Comma`
     # - `Key::Minus`
     # - `Key::Period`
