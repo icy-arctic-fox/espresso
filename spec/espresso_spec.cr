@@ -29,19 +29,19 @@ Spectator.describe Espresso do
   describe "#version" do
     subject { Espresso.version }
 
-    it { is_expected.to have_attributes(major: major, minor: minor, patch: patch) }
+    it { is_expected.to have_attributes(major: major, minor: minor) }
   end
 
   describe "#compiled_version" do
     subject { Espresso.compiled_version }
 
-    it { is_expected.to have_attributes(major: major, minor: minor, patch: patch) }
+    it { is_expected.to have_attributes(major: major, minor: minor) }
   end
 
   describe "#runtime_version" do
     subject { Espresso.runtime_version }
 
-    it { is_expected.to have_attributes(major: major, minor: minor, patch: patch) }
+    it { is_expected.to have_attributes(major: major, minor: minor) }
   end
 
   describe "#version_string" do
