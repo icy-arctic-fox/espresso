@@ -103,18 +103,20 @@ Spectator.describe Espresso::Monitor do
 
   describe "#gamma=" do
     it "doesn't raise on valid gamma values" do
-      return unless gamma_supported?
+      skip "Gamma not supported" unless gamma_supported?
 
       expect { monitor.gamma = 2.2 }.to_not raise_error
     end
 
     it "raises on invalid gamma values" do
+      skip "Gamma not supported" unless gamma_supported?
+
       expect { monitor.gamma = -1.0 }.to raise_error(ArgumentError, /gamma/)
     end
   end
 
   it "can get and set gamma ramps" do
-    return unless gamma_supported?
+    skip "Gamma not supported" unless gamma_supported?
 
     original_ramp = Espresso::GammaRamp.new
     monitor.gamma_ramp = original_ramp
