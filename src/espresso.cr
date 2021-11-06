@@ -9,7 +9,7 @@ module Espresso
   include BoolConversion
 
   # Current version of the shard.
-  VERSION = "0.1.6"
+  VERSION = {{ `shards version "#{__DIR__}"`.stringify.chomp }}
 
   # Prepares GLFW so that it can be used.
   # This method must be called prior
