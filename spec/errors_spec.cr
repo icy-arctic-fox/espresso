@@ -2,7 +2,7 @@ require "./spec_helper"
 
 Spectator.describe "errors" do
   # Pairs of the error classes and their expected error codes.
-  def error_codes
+  def self.error_codes
     [
       {Espresso::NotInitializedError, LibGLFW::ErrorCode::NotInitialized},
       {Espresso::NoCurrentContextError, LibGLFW::ErrorCode::NoCurrentContext},
