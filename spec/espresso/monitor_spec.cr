@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe Espresso::Monitor do
   # XRandR information.

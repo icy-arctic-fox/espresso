@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe Espresso::Coordinates do
   let(x) { 42.42 }

@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe Espresso::Scale do
   let(x) { 2.0f32 }

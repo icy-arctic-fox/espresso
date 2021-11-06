@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe Espresso::GammaRamp do
   it "creates arrays of expected length" do

@@ -1,4 +1,4 @@
-require "./spec_helper"
+require "../spec_helper"
 
 Spectator.describe "errors" do
   # Pairs of the error classes and their expected error codes.
