@@ -241,9 +241,9 @@ module Espresso
 
     # Checks if there are any registered listeners.
     protected def self.any_listeners?
-      @@class_connect_listeners.any? ||
-        @@class_disconnect_listeners.any? ||
-        @@disconnect_listeners.any?
+      !(@@class_connect_listeners.empty? &&
+        @@class_disconnect_listeners.empty? &&
+        @@disconnect_listeners.empty?)
     end
 
     # Method that is called by GLFW when any monitor event occurs.
