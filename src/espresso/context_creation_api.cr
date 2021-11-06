@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   enum ContextCreationAPI
     Native = LibGLFW::ContextCreationAPI::Native

@@ -1,7 +1,7 @@
 require "./bounds"
 require "./error_handling"
 require "./gamma_ramp"
-require "./invalid_value_error"
+require "./errors/invalid_value_error"
 require "./position"
 require "./scale"
 require "./size"

@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   enum ClientAPI
     OpenGL   = LibGLFW::ClientAPI::OpenGL

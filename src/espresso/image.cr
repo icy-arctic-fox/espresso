@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   # Describes a single 2D image.
   #

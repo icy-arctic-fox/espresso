@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   # Mix-in for converting between Crystal booleans and GLFW integer booleans.
   private module BoolConversion

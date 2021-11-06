@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   # Gamma ramp of a monitor.
   class GammaRamp

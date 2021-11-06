@@ -1,14 +1,4 @@
-require "./glfw_error"
-require "./not_initialized_error"
-require "./no_current_context_error"
-require "./invalid_enum_error"
-require "./invalid_value_error"
-require "./out_of_memory_error"
-require "./api_unavailable_error"
-require "./version_unavailable_error"
-require "./platform_error"
-require "./format_unavailable_error"
-require "./no_window_context_error"
+require "./errors/*"
 
 module Espresso
   # Mix-in for handling errors from GLFW.

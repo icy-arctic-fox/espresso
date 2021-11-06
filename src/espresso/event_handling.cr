@@ -1,5 +1,3 @@
-require "glfw"
-
 module Espresso
   # Mix-in to provide a macro for defining events and callbacks.
   # Exposes a single macro named `#event`.

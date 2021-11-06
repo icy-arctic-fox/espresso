@@ -1,4 +1,3 @@
-require "glfw"
 require "./error_handling"
 
 module Espresso

@@ -1,4 +1,3 @@
-require "glfw"
 require "./size"
 
 module Espresso

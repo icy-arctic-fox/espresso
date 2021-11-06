@@ -1,4 +1,3 @@
-require "glfw"
 require "./enum_copy"
 
 module Espresso
