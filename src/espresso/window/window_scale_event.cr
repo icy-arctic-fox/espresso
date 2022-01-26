@@ -16,7 +16,7 @@ module Espresso
     end
 
     # The new content scale of the window.
-    def scale
+    def scale : Scale
       Scale.new(@x, @y)
     end
   end

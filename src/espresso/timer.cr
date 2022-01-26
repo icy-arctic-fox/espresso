@@ -29,13 +29,13 @@ module Espresso
     # then it has the effect of restarting the the current time segment at the last call.
     # Any previous time accumulated before this call is kept.
     # Call `#reset` to completely restart the timer to zero.
-    def start
+    def start : Nil
       @running = true
       @start = Timer.value
     end
 
     # Stops the timer.
-    def stop
+    def stop : Nil
       return unless running?
 
       @accum += runtime
@@ -44,41 +44,41 @@ module Espresso
 
     # Resets the timer back to zero.
     # The timer will continue running if it already was.
-    def reset
+    def reset : Nil
       @accum = 0u64
       @start = Timer.value
     end
 
     # Total elapsed time in seconds.
-    def seconds
+    def seconds : Float64
       value.to_f64 / Timer.frequency
     end
 
     # Total elapsed time in nanoseconds (10^-9).
     # Might be rounded depending on the system's precision.
-    def nanoseconds
+    def nanoseconds : Float64
       value.to_f64 / (Timer.frequency / 1_000_000_000f64)
     end
 
     # Total elapsed time in microseconds (10^-6).
     # Might be rounded depending on the system's precision.
-    def microseconds
+    def microseconds : Float64
       value.to_f64 / (Timer.frequency / 1_000_000f64)
     end
 
     # Total elapsed time in milliseconds (10^-3).
     # Might be rounded depending on the system's precision.
-    def milliseconds
+    def milliseconds : Float64
       value.to_f64 / (Timer.frequency / 1_000f64)
     end
 
     # Creates a `Time::Span` from the timer's value.
-    def span
+    def span : Time::Span
       Time::Span.new(nanoseconds: nanoseconds.to_i64)
     end
 
     # Measures how long a block takes to execute and returns a time span.
-    def self.measure
+    def self.measure : Time::Span
       timer = Timer.new(true)
       yield
       timer.span

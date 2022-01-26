@@ -16,12 +16,13 @@ module Espresso
     end
 
     # The new cursor position, relative to the top-left corner of the content area.
-    def position
+    def position : Coordinates
       Coordinates.new(@x, @y)
     end
 
     # The new cursor position, relative to the top-left corner of the content area.
-    def coordinates
+    @[AlwaysInline]
+    def coordinates : Coordinates
       position
     end
   end

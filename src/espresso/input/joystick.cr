@@ -32,7 +32,7 @@ module Espresso
     # Returns all possible joysticks, connected and disconnected.
     # GLFW supports a maximum of 16 joysticks,
     # so the collection returned by this method always has 16 elements.
-    def self.all
+    def self.all : Enumerable(Joystick)
       LibGLFW::Joystick.values.map do |id|
         Joystick.new(id)
       end
@@ -47,7 +47,7 @@ module Espresso
     end
 
     # Returns a list of all connected joysticks.
-    def self.connected
+    def self.connected : Enumerable(Joystick)
       all.select(&.connected?)
     end
 
@@ -78,7 +78,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def axes?
+    def axes? : Indexable(Float)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_axes(@id, pointerof(count)) }
       pointer ? Slice.new(pointer, count) : nil
@@ -93,7 +93,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def axes
+    def axes : Indexable(Float)
       axes? || raise "Joystick disconnected"
     end
 
@@ -114,7 +114,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def buttons?
+    def buttons? : Indexable(ButtonState)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_buttons(@id, pointerof(count)) }
       pointer ? Slice.new(pointer, count).unsafe_as(Slice(ButtonState)) : nil
@@ -136,7 +136,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def buttons
+    def buttons : Indexable(ButtonState)
       buttons? || raise "Joystick disconnected"
     end
 
@@ -152,7 +152,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def hats?
+    def hats? : Indexable(JoystickHatState)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_hats(@id, pointerof(count)) }
       pointer ? Slice.new(pointer, count).unsafe_as(Slice(JoystickHatState)) : nil
@@ -169,7 +169,7 @@ module Espresso
     # The returned `Slice` is allocated and freed by GLFW.
     # You should not free it yourself.
     # It is valid until the specified joystick is disconnected or the library is terminated.
-    def hats
+    def hats : Indexable(JoystickHatState)
       hats? || raise "Joystick disconnected"
     end
 
@@ -178,7 +178,7 @@ module Espresso
     # If this joystick is not present (`#connected?`),
     # this method will return nil, but will not raise an error.
     # This can be used instead of first calling `#connected?`.
-    def name?
+    def name? : String?
       chars = expect_truthy { LibGLFW.get_joystick_name(@id) }
       chars ? String.new(chars) : nil
     end
@@ -187,7 +187,7 @@ module Espresso
     #
     # If this joystick is not present (`#connected?`),
     # this method will raise an error.
-    def name
+    def name : String
       name? || raise "Joystick disconnected"
     end
 
@@ -206,7 +206,7 @@ module Espresso
     # e.g. all wired Xbox 360 controllers will have the same GUID on that platform.
     # The GUID for a unit may vary between platforms
     # depending on what hardware information the platform specific APIs provide.
-    def guid?
+    def guid? : String?
       chars = expect_truthy { LibGLFW.get_joystick_guid(@id) }
       chars ? String.new(chars) : nil
     end
@@ -225,7 +225,7 @@ module Espresso
     # e.g. all wired Xbox 360 controllers will have the same GUID on that platform.
     # The GUID for a unit may vary between platforms
     # depending on what hardware information the platform specific APIs provide.
-    def guid
+    def guid : String
       guid? || raise "Joystick disconnected"
     end
 
@@ -233,7 +233,7 @@ module Espresso
     # The initial value is nil.
     #
     # This function may be called from the `#on_disconnect` callback.
-    def user_pointer
+    def user_pointer : Pointer
       checked { LibGLFW.get_joystick_user_pointer(@id) }
     end
 
@@ -264,7 +264,7 @@ module Espresso
     # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
     #
     # See also: `#gamepad?`
-    def state?
+    def state? : GamepadState?
       state = uninitialized LibGLFW::GamepadState
       result = expect_truthy { LibGLFW.get_gamepad_state(@id, pointerof(state)) }
       int_to_bool(result) ? GamepadState.new(state) : nil
@@ -277,7 +277,7 @@ module Espresso
     # Call `#connected?` to check whether it is present regardless of whether it has a mapping.
     #
     # See also: `#gamepad?`
-    def state
+    def state : GamepadState
       state?.not_nil!
     end
 

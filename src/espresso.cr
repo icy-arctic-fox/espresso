@@ -12,8 +12,7 @@ module Espresso
   VERSION = {{ `shards version "#{__DIR__}"`.stringify.chomp }}
 
   # Prepares GLFW so that it can be used.
-  # This method must be called prior
-  # to any features that require initialization.
+  # This method must be called prior to any features that require initialization.
   # If the initialization fails, a `GLFWError` will be raised.
   #
   # Before exiting the program, and after GLFW is no longer needed,
@@ -48,16 +47,14 @@ module Espresso
   end
 
   # Utility method for setting an initialization hint.
-  # Converts *flag* from a boolean to an GLFW boolean integer
-  # and sets the corresponding *hint*.
+  # Converts *flag* from a boolean to an GLFW boolean integer and sets the corresponding *hint*.
   private def init_hint(hint, flag)
     value = bool_to_int(flag)
     LibGLFW.init_hint(hint, value)
   end
 
   # Cleans up resources used by GLFW and and changes it made to the system.
-  # This method must be called after GLFW is no longer used
-  # and before the program exits.
+  # This method must be called after GLFW is no longer used and before the program exits.
   # Once GLFW is terminated, it must be reinitialized before using it again.
   #
   # Calling this method when GLFW is already terminated does nothing.
@@ -99,8 +96,7 @@ module Espresso
 
   # Version of GLFW that Espresso was compiled against.
   # This should match `#runtime_version` to have consistent/expected behavior.
-  # A `SemanticVersion` is returned.
-  def compiled_version
+  def compiled_version : SemanticVersion
     SemanticVersion.new(
       LibGLFW::VERSION_MAJOR,
       LibGLFW::VERSION_MINOR,
@@ -110,22 +106,20 @@ module Espresso
 
   # Version of GLFW that is loaded and in-use by Espresso.
   # This should match `#compiled_version` to have consistent/expected behavior.
-  # A `SemanticVersion` is returned.
-  def runtime_version
+  def runtime_version : SemanticVersion
     LibGLFW.get_version(out major, out minor, out revision)
     SemanticVersion.new(major, minor, revision)
   end
 
   # Version of GLFW that is loaded and in-use by Espresso.
-  # A `SemanticVersion` is returned.
-  def version
+  @[AlwaysInline]
+  def version : SemanticVersion
     runtime_version
   end
 
   # Compiled version string produced by GLFW.
-  # Includes the version string and
-  # additional compilation and environment information.
-  def version_string
+  # Includes the version string and additional compilation and environment information.
+  def version_string : String
     String.new(LibGLFW.get_version_string)
   end
 end

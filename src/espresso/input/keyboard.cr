@@ -102,7 +102,7 @@ module Espresso
     # The modifier key bit masks are not key tokens and cannot be used with this method.
     #
     # **Do not use this method** to implement text input.
-    def key(key)
+    def key(key) : KeyState
       value = expect_truthy { LibGLFW.get_key(@pointer, key) }
       KeyState.new(value.to_i)
     end

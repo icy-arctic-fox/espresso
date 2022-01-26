@@ -16,7 +16,7 @@ module Espresso
       # This will be one of `ButtonState::Pressed` or `ButtonState::Released`.
       def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
               .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/D_Pad/, "DPad").downcase}}
+              .gsub(/D_Pad/, "DPad").downcase}} : GamepadState
         buttons[GamepadButton::{{name.id}}]
       end
 
@@ -32,7 +32,7 @@ module Espresso
     private macro axis(name)
       # Gets the state of the axis, in the range -1.0 to 1.0 inclusive.
       def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2").downcase}}
+              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2").downcase}} : GamepadAxis
         axes[GamepadAxis::{{name.id}}]
       end
     end
@@ -43,13 +43,13 @@ module Espresso
 
     # The states of each gamepad button,
     # `ButtonState::Pressed` or `ButtonState::Released`.
-    def buttons
+    def buttons : Indexable(ButtonState)
       @state.buttons
     end
 
     # The states of each gamepad axis,
     # in the range -1.0 to 1.0 inclusive.
-    def axes
+    def axes : Indexable(Float)
       @state.axes
     end
 

@@ -73,7 +73,7 @@ module Espresso
     # this method returns `ButtonState::Pressed` the first time you call it
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
-    def button(button : MouseButton)
+    def button(button : MouseButton) : ButtonState
       action = expect_truthy { LibGLFW.get_mouse_button(@pointer, button.native) }
       ButtonState.new(action.to_i)
     end
@@ -94,7 +94,7 @@ module Espresso
     # this method returns `ButtonState::Pressed` the first time you call it
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
-    def left
+    def left : ButtonState
       button(MouseButton::Left)
     end
 
@@ -114,7 +114,7 @@ module Espresso
     # this method returns `ButtonState::Pressed` the first time you call it
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
-    def right
+    def right : ButtonState
       button(MouseButton::Right)
     end
 
@@ -134,7 +134,7 @@ module Espresso
     # this method returns `ButtonState::Pressed` the first time you call it
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
-    def middle
+    def middle : ButtonState
       button(MouseButton::Middle)
     end
 
@@ -157,7 +157,7 @@ module Espresso
     # Casting directly to an integer type works for positive coordinates, but fails for negative ones.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def position
+    def position : Coordinates
       x = uninitialized Float64
       y = uninitialized Float64
 
@@ -241,7 +241,7 @@ module Espresso
     #
     # **Wayland:** This method will only work when the cursor mode is `#disabled?`,
     # otherwise it will do nothing.
-    def move(x, y)
+    def move(x, y) : Nil
       checked { LibGLFW.set_cursor_pos(@pointer, x, y) }
     end
 
@@ -258,7 +258,7 @@ module Espresso
     # Resets the cursor for the associated window back to the default arrow.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def reset_cursor
+    def reset_cursor : Nil
       checked { LibGLFW.set_cursor(@pointer, nil) }
     end
 
@@ -268,7 +268,7 @@ module Espresso
     # By default, the cursor mode is `CursorMode::Normal`,
     # meaning the regular arrow cursor (or another cursor set with `#cursor=`)
     # is used and cursor motion is not limited.
-    def mode
+    def mode : CursorMode
       value = expect_truthy { LibGLFW.get_input_mode(@pointer, LibGLFW::InputMode::Cursor) }
       CursorMode.value_from(value.to_i)
     end
@@ -294,7 +294,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     #
     # See also: `#disabled?`
-    def disable
+    def disable : Nil
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::Cursor, LibGLFW::CursorMode::Disabled) }
     end
 
@@ -311,7 +311,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     #
     # See also: `#hidden?`
-    def hide
+    def hide : Nil
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::Cursor, LibGLFW::CursorMode::Hidden) }
     end
 
@@ -327,7 +327,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     #
     # See also: `#visible?`
-    def show
+    def show : Nil
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::Cursor, LibGLFW::CursorMode::Normal) }
     end
 

@@ -16,7 +16,7 @@ module Espresso
     end
 
     # New dimensions of the window.
-    def size
+    def size : Size
       Size.new(@width, @height)
     end
   end

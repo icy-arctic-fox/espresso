@@ -90,7 +90,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title)
+    def build(width, height, title) : Window
       apply_hints { Window.new(width, height, title) }
     end
 
@@ -106,7 +106,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title, share)
+    def build(width, height, title, share) : Window
       apply_hints { Window.new(width, height, title, share) }
     end
 
@@ -165,7 +165,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String)
+    def build_full_screen(title : String) : Window
       apply_hints { Window.full_screen(title) }
     end
 
@@ -179,7 +179,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor)
+    def build_full_screen(title : String, monitor : Monitor) : Window
       apply_hints { Window.full_screen(title, monitor) }
     end
 
@@ -194,7 +194,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, share : Window)
+    def build_full_screen(title : String, monitor : Monitor, share : Window) : Window
       apply_hints { Window.full_screen(title, monitor, share) }
     end
 
@@ -207,7 +207,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
+    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32) : Window
       apply_hints { Window.full_screen(title, monitor, width, height) }
     end
 
@@ -221,7 +221,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
+    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window) : Window
       apply_hints { Window.full_screen(title, monitor, width, height, share) }
     end
 

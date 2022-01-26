@@ -21,14 +21,14 @@ module Espresso
 
     # Attempts to retrieve the user's primary monitor.
     # If there's no monitors, then this returns nil.
-    def self.primary?
+    def self.primary? : Monitor?
       pointer = ErrorHandling.static_expect_truthy { LibGLFW.get_primary_monitor }
       pointer ? Monitor.new(pointer) : nil
     end
 
     # Retrieves the user's primary monitor.
     # If there are no monitors, then a `NilAssertionError` will be raised.
-    def self.primary
+    def self.primary : self
       primary?.not_nil!
     end
 
@@ -38,7 +38,7 @@ module Espresso
     # The primary monitor is always the first monitor in the returned array,
     # but other monitors may be moved to a different index
     # when a monitor is connected or disconnected.
-    def self.all
+    def self.all : Enumerable(Monitor)
       count = uninitialized Int32
       pointers = ErrorHandling.static_expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
       return [] of Monitor unless pointers # nil is returned if there's no monitors.
@@ -53,7 +53,7 @@ module Espresso
     # This is the position of the monitor on the virtual desktop.
     #
     # Can raise a `PlatformError`.
-    def position
+    def position : Position
       checked do
         LibGLFW.get_monitor_pos(@pointer, out x, out y)
         Position.new(x, y)
@@ -63,7 +63,7 @@ module Espresso
     # Size, in screen coordinates, of the monitor.
     #
     # Can raise a `PlatformError`.
-    def size
+    def size : Size
       current_video_mode.size
     end
 
@@ -71,7 +71,7 @@ module Espresso
     # This is specified in screen coordinates.
     #
     # Can raise a `PlatformError`.
-    def workarea
+    def workarea : Bounds
       checked do
         LibGLFW.get_monitor_workarea(@pointer, out x, out y, out width, out height)
         Bounds.new(x, y, width, height)
@@ -88,7 +88,7 @@ module Espresso
     # or because the driver does not report it accurately.
     # On Windows, the physical size is calculated from the current resolution
     # and system DPI instead of querying the monitor EDID data.
-    def physical_size
+    def physical_size : Size
       checked do
         LibGLFW.get_monitor_physical_size(@pointer, out width, out height)
         Size.new(width, height)
@@ -107,7 +107,7 @@ module Espresso
     # Can raise a `PlatformError`.
     #
     # See also: `Window#content_scale`
-    def content_scale
+    def content_scale : Scale
       checked do
         LibGLFW.get_monitor_content_scale(@pointer, out x, out y)
         Scale.new(x, y)
@@ -121,7 +121,7 @@ module Espresso
     # Only the monitor handle is guaranteed to be unique,
     # and only until that monitor is disconnected.
     # If you want to compare monitors, use the `==` operator.
-    def name
+    def name : String
       c_string = expect_truthy { LibGLFW.get_monitor_name(@pointer) }
       String.new(c_string)
     end
@@ -133,7 +133,7 @@ module Espresso
     #
     # This method may be called from the monitor connect/disconnect event,
     # even if the monitor is being disconnected.
-    def user_pointer
+    def user_pointer : Pointer
       checked { LibGLFW.get_monitor_user_pointer(@pointer) }
     end
 
@@ -151,7 +151,7 @@ module Espresso
     # and then by resolution area (the product of width and height).
     #
     # Can raise a `PlatformError`.
-    def video_modes
+    def video_modes : Enumerable(VideoMode)
       count = uninitialized Int32
       video_modes_pointer = expect_truthy { LibGLFW.get_video_modes(@pointer, pointerof(count)) }
       video_modes = Slice.new(video_modes_pointer, count, read_only: true)
@@ -164,7 +164,7 @@ module Espresso
     # the video mode returned will match the window's video mode.
     #
     # Can raise a `PlatformError`.
-    def current_video_mode
+    def current_video_mode : VideoMode
       video_mode_pointer = expect_truthy { LibGLFW.get_video_mode(@pointer) }
       VideoMode.new(video_mode_pointer.value)
     end
@@ -192,7 +192,7 @@ module Espresso
     # and this method will always raise `PlatformError`.
     #
     # Can raise a `PlatformError`.
-    def gamma_ramp
+    def gamma_ramp : GammaRamp
       ramp_pointer = expect_truthy { LibGLFW.get_gamma_ramp(@pointer) }
       GammaRamp.new(ramp_pointer)
     end

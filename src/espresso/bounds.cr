@@ -19,22 +19,22 @@ module Espresso
     end
 
     # X-coordinate of the left side.
-    def left
+    def left : Int32
       @x
     end
 
     # X-coordinate of the right side.
-    def right
+    def right : Int32
       @x + @width
     end
 
     # Y-coordinate of the upper bound.
-    def top
+    def top : Int32
       @y
     end
 
     # Y-coordinate of the lower bound.
-    def bottom
+    def bottom : Int32
       @y + @height
     end
   end

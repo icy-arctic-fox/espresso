@@ -4,7 +4,7 @@ module Espresso
   # Event involving the keyboard.
   abstract struct KeyboardEvent < WindowEvent
     # Keyboard tied to the window that was involved in the event.
-    def keyboard
+    def keyboard : Keyboard
       window.keyboard
     end
   end

@@ -39,12 +39,12 @@ module Espresso
     end
 
     # Width and height of the video mode.
-    def size
+    def size : Size
       Size.new(@width, @height)
     end
 
     # Total color depth of all channels.
-    def depth
+    def depth : Int
       @red + @blue + @green
     end
 

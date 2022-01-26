@@ -21,7 +21,7 @@ module Espresso
     end
 
     # The new coordinates of the upper-left corner of the content area of the window.
-    def position
+    def position : Position
       Position.new(@x, @y)
     end
   end

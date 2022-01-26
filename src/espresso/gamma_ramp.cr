@@ -30,7 +30,7 @@ module Espresso
     end
 
     # Number of elements in each channel's array.
-    def size
+    def size : Int
       @red.size
     end
 

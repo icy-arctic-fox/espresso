@@ -295,13 +295,12 @@ module Espresso
     # Destroys this window and its context.
     # On calling this method, no further callbacks will be called for this window.
     #
-    # If the context of this window is current on the main thread,
-    # it is detached before being destroyed.
+    # If the context of this window is current on the main thread, it is detached before being destroyed.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     #
     # **Do not** attempt to use the window after it has been destroyed.
-    def destroy!
+    def destroy! : Nil
       remove_all_listeners
       checked { LibGLFW.destroy_window(@pointer) }
     end
@@ -539,6 +538,7 @@ module Espresso
     # A `WindowIconifyEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_iconify_listener` with the proc returned by this method.
+    @[AlwaysInline]
     def on_minimize(&block : WindowIconifyEvent ->)
       on_iconify(&block)
     end
@@ -550,7 +550,7 @@ module Espresso
     end
 
     # Removes all previously registered listeners for all window events.
-    private def remove_all_listeners
+    private def remove_all_listeners : Nil
       clear_move_listeners
       clear_resize_listeners
       clear_closing_listeners
@@ -568,14 +568,14 @@ module Espresso
     # Retrieves the mouse instance for this window.
     # Even though the system may only have one logical mouse attached,
     # mouse instances are tied to a window.
-    def mouse
+    def mouse : Mouse
       Mouse.new(@pointer)
     end
 
     # Retrieves the keyboard instance for this window.
     # Even though the system may only have one logical keyboard attached,
     # keyboard instances are tied to a window.
-    def keyboard
+    def keyboard : Keyboard
       Keyboard.new(@pointer)
     end
 
@@ -633,7 +633,7 @@ module Espresso
     # Resets the window's icon to the default icon.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def reset_icon
+    def reset_icon : Nil
       checked { LibGLFW.set_window_icon(@pointer, 0, nil) }
     end
 
@@ -641,7 +641,7 @@ module Espresso
     # of the content area of this window.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def position
+    def position : Position
       x = uninitialized Int32
       y = uninitialized Int32
 
@@ -709,7 +709,7 @@ module Espresso
     # GLFW cannot and should not override these limits.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def move(x, y)
+    def move(x, y) : Nil
       checked { LibGLFW.set_window_pos(@pointer, x, y) }
     end
 
@@ -717,7 +717,7 @@ module Espresso
     # If you wish to retrieve the size of the framebuffer of the window in pixels, see `#framebuffer_size`.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def size
+    def size : Size
       width = uninitialized Int32
       height = uninitialized Int32
 
@@ -805,7 +805,7 @@ module Espresso
     #
     # **Wayland:** A full screen window will not attempt to change the mode,
     # no matter what the requested size.
-    def resize(width, height)
+    def resize(width, height) : Nil
       checked { LibGLFW.set_window_size(@pointer, width, height) }
     end
 
@@ -825,7 +825,7 @@ module Espresso
     #
     # **Wayland:** The size limits will not be applied until the window is actually resized,
     # either by the user or by the compositor.
-    def limit_size(min_width = nil, min_height = nil, max_width = nil, max_height = nil)
+    def limit_size(min_width = nil, min_height = nil, max_width = nil, max_height = nil) : Nil
       min_width ||= LibGLFW::DONT_CARE
       min_height ||= LibGLFW::DONT_CARE
       max_width ||= LibGLFW::DONT_CARE
@@ -841,7 +841,7 @@ module Espresso
     #
     # **Wayland:** The size limits will not be applied until the window is actually resized,
     # either by the user or by the compositor.
-    def unlimit_size
+    def unlimit_size : Nil
       checked do
         LibGLFW.set_window_size_limits(@pointer,
           LibGLFW::DONT_CARE, LibGLFW::DONT_CARE, LibGLFW::DONT_CARE, LibGLFW::DONT_CARE)
@@ -864,7 +864,7 @@ module Espresso
     #
     # **Wayland:** The aspect ratio will not be applied until the window is actually resized,
     # either by the user or by the compositor.
-    def aspect_ratio(numerator, denominator)
+    def aspect_ratio(numerator, denominator) : Nil
       checked { LibGLFW.set_window_aspect_ratio(@pointer, numerator, denominator) }
     end
 
@@ -872,7 +872,7 @@ module Espresso
     # Allows the window to be resized without restricting to a given aspect ratio.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def disable_aspect_ratio
+    def disable_aspect_ratio : Nil
       aspect_ratio(LibGLFW::DONT_CARE, LibGLFW::DONT_CARE)
     end
 
@@ -880,7 +880,7 @@ module Espresso
     # If you wish to retrieve the size of the window in screen coordinates, see `#size`.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def framebuffer_size
+    def framebuffer_size : Size
       width = uninitialized Int32
       height = uninitialized Int32
 
@@ -897,7 +897,7 @@ module Espresso
     # the retrieved values will always be zero or positive.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def frame_size
+    def frame_size : FrameSize
       left = uninitialized Int32
       top = uninitialized Int32
       right = uninitialized Int32
@@ -922,7 +922,7 @@ module Espresso
     # the window content scale will depend on which monitor the system considers the window to be on.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def scale
+    def scale : Scale
       x = uninitialized Float32
       y = uninitialized Float32
 
@@ -939,7 +939,7 @@ module Espresso
     # The initial opacity value for newly created windows is one.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def opacity
+    def opacity : Float
       checked { LibGLFW.get_window_opacity(@pointer) }
     end
 
@@ -968,7 +968,7 @@ module Espresso
     #
     # **Wayland:** There is no concept of iconification in wl_shell,
     # this method will raise a `PlatformError` when using this deprecated protocol.
-    def iconify
+    def iconify : Nil
       checked { LibGLFW.iconify_window(@pointer) }
     end
 
@@ -979,7 +979,7 @@ module Espresso
     # the resolution chosen for the window is restored on the selected monitor.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def restore
+    def restore : Nil
       checked { LibGLFW.restore_window(@pointer) }
     end
 
@@ -989,7 +989,7 @@ module Espresso
     # If the specified window is a full screen window, this function does nothing.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def maximize
+    def maximize : Nil
       checked { LibGLFW.maximize_window(@pointer) }
     end
 
@@ -1001,7 +1001,7 @@ module Espresso
     # or change the behavior for an existing window with `#focus_on_show=`.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def show
+    def show : Nil
       checked { LibGLFW.show_window(@pointer) }
     end
 
@@ -1009,7 +1009,7 @@ module Espresso
     # If the window is already hidden or is in full screen mode, this function does nothing.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def hide
+    def hide : Nil
       checked { LibGLFW.hide_window(@pointer) }
     end
 
@@ -1032,7 +1032,7 @@ module Espresso
     #
     # **Wayland:** It is not possible for an application to bring its windows to front,
     # this method will always raise a `PlatformError`.
-    def focus
+    def focus : Nil
       checked { LibGLFW.focus_window(@pointer) }
     end
 
@@ -1047,7 +1047,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     #
     # **macOS:** Attention is requested to the application as a whole, not the specific window.
-    def request_attention
+    def request_attention : Nil
       checked { LibGLFW.request_window_attention(@pointer) }
     end
 
@@ -1057,7 +1057,7 @@ module Espresso
     # a `FormatUnavailableError` is raised.
     #
     # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `FormatUnavailableError`.
-    def clipboard
+    def clipboard : String
       chars = expect_truthy { LibGLFW.get_clipboard_string(@pointer) }
       String.new(chars)
     end
@@ -1068,7 +1068,7 @@ module Espresso
     # nil is returned..
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def clipboard?
+    def clipboard? : String?
       chars = LibGLFW.get_clipboard_string(@pointer)
       chars ? String.new(chars) : nil
     end
@@ -1087,7 +1087,7 @@ module Espresso
     # a `FormatUnavailableError` is raised.
     #
     # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `FormatUnavailableError`.
-    def self.clipboard
+    def self.clipboard : String
       chars = ErrorHandling.static_expect_truthy { LibGLFW.get_clipboard_string(nil) }
       String.new(chars)
     end
@@ -1106,7 +1106,7 @@ module Espresso
     # nil is returned..
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def self.clipboard?
+    def self.clipboard? : String?
       chars = LibGLFW.get_clipboard_string(nil)
       chars ? String.new(chars) : nil
     end
@@ -1115,7 +1115,7 @@ module Espresso
     # If the window isn't full screen, then nil is returned.
     #
     # Possible errors that could be raised are: `NotInitializedError`.
-    def monitor?
+    def monitor? : Monitor?
       pointer = expect_truthy { LibGLFW.get_window_monitor(@pointer) }
       pointer ? Monitor.new(pointer) : nil
     end
@@ -1124,7 +1124,7 @@ module Espresso
     # If the window isn't full screen, then an error is raised.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `NilAssertionError`.
-    def monitor
+    def monitor : Monitor
       monitor?.not_nil!
     end
 
@@ -1150,7 +1150,7 @@ module Espresso
     # although you may need to update your viewport if the framebuffer size has changed.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def full_screen!
+    def full_screen! : Nil
       full_screen!(Monitor.primary)
     end
 
@@ -1163,7 +1163,7 @@ module Espresso
     # although you may need to update your viewport if the framebuffer size has changed.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def full_screen!(monitor)
+    def full_screen!(monitor) : Nil
       size = monitor.size
       full_screen!(monitor, size.width, size.height)
     end
@@ -1180,7 +1180,7 @@ module Espresso
     #
     # **Wayland:** Setting the window to full screen will not attempt to change the mode,
     # no matter what the requested size or refresh rate.
-    def full_screen!(monitor, width, height)
+    def full_screen!(monitor, width, height) : Nil
       checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, LibGLFW::DONT_CARE) }
     end
 
@@ -1195,7 +1195,7 @@ module Espresso
     #
     # **Wayland:** Setting the window to full screen will not attempt to change the mode,
     # no matter what the requested size or refresh rate.
-    def full_screen!(monitor, width, height, refresh_rate)
+    def full_screen!(monitor, width, height, refresh_rate) : Nil
       checked { LibGLFW.set_window_monitor(@pointer, monitor, 0, 0, width, height, refresh_rate) }
     end
 
@@ -1215,7 +1215,7 @@ module Espresso
     #
     # **Wayland:** The desired window position is ignored,
     # as there is no way for an application to set this property.
-    def windowed!(x, y, width, height)
+    def windowed!(x, y, width, height) : Nil
       checked { LibGLFW.set_window_monitor(@pointer, nil, x, y, width, height, LibGLFW::DONT_CARE) }
     end
 
@@ -1240,7 +1240,7 @@ module Espresso
     # The initial value is nil.
     #
     # Possible errors that could be raised are: `NotInitializedError`.
-    def user_pointer
+    def user_pointer : Pointer
       expect_truthy { LibGLFW.get_window_user_pointer(@pointer, pointer) }
     end
 
@@ -1268,7 +1268,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError`, `NoWindowContextError`, and `PlatformError`.
     #
     # **EGL:** The context of the specified window must be current on the calling thread.
-    def swap_buffers
+    def swap_buffers : Nil
       checked { LibGLFW.swap_buffers(@pointer) }
     end
 
@@ -1458,7 +1458,7 @@ module Espresso
     # Indicates the client API's version of the window's context.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def context_version
+    def context_version : SemanticVersion
       SemanticVersion.new(context_version_major, context_version_minor, context_revision)
     end
 
@@ -1485,7 +1485,7 @@ module Espresso
     # Specifying a window without a context will generate a `NoWindowContextError` error.
     #
     # Possible errors that could be raised are: `NotInitializedError`, `NoWindowContextError`, and `PlatformError`.
-    def current!
+    def current! : Nil
       checked { LibGLFW.make_context_current(@pointer) }
     end
 
@@ -1504,7 +1504,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError`.
     #
     # See also: `#current!`
-    def self.current?
+    def self.current? : Window?
       pointer = ErrorHandling.static_expect_truthy { LibGLFW.get_current_context }
       pointer ? Window.new(pointer) : nil
     end
@@ -1513,7 +1513,7 @@ module Espresso
     # This will raise a `NilAssertionError` if no window is current.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `NilAssertionError`.
-    def self.current
+    def self.current : self
       current?.not_nil!
     end
 
@@ -1540,7 +1540,7 @@ module Espresso
     # Event processing is not required for joystick input to work.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def self.poll_events
+    def self.poll_events : Nil
       ErrorHandling.static_checked { LibGLFW.poll_events }
     end
 
@@ -1567,7 +1567,7 @@ module Espresso
     # Event processing is not required for joystick input to work.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def self.wait_events
+    def self.wait_events : Nil
       ErrorHandling.static_checked { LibGLFW.wait_events }
     end
 
@@ -1598,7 +1598,7 @@ module Espresso
     # Event processing is not required for joystick input to work.
     #
     # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `ArgumentError`.
-    def self.wait_events(timeout)
+    def self.wait_events(timeout) : Nil
       ErrorHandling.static_checked { LibGLFW.wait_events_timeout(timeout) }
     rescue ex : InvalidValueError
       raise ArgumentError.new(ex.message)
@@ -1608,7 +1608,7 @@ module Espresso
     # causing `#wait_events` to return.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
-    def self.post_empty_event
+    def self.post_empty_event : Nil
       ErrorHandling.static_checked { LibGLFW.post_empty_event }
     end
 
