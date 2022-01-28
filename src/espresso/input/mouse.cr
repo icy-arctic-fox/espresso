@@ -1,4 +1,3 @@
-require "../bool_conversion"
 require "../coordinates"
 require "../error_handling"
 require "../event_handling"
@@ -10,7 +9,6 @@ module Espresso
   # Each `Window` has its own mouse instance with properties specific to that window.
   # To retrieve a mouse instance, use `Window#mouse`.
   struct Mouse
-    include BoolConversion
     include ErrorHandling
     include EventHandling
 
@@ -342,7 +340,7 @@ module Espresso
     # See also: `#sticky=`
     def sticky?
       value = expect_truthy { LibGLFW.get_input_mode(@pointer, LibGLFW::InputMode::StickyMouseButtons) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Enables or disables sticky mouse buttons.
@@ -364,7 +362,7 @@ module Espresso
     #
     # See also: `#sticky?`
     def sticky=(flag)
-      value = bool_to_int(flag)
+      value = LibGLFW::Bool.new(flag)
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::StickyMouseButtons, value) }
     end
 
@@ -387,7 +385,7 @@ module Espresso
     # Because of this, raw mouse motion is only provided when the cursor is disabled.
     def self.raw_motion_supported?
       value = expect_truthy { LibGLFW.raw_mouse_motion_supported }
-      int_to_bool(value)
+      value.to_bool
     end
   end
 end

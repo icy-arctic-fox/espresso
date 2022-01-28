@@ -1,4 +1,3 @@
-require "../bool_conversion"
 require "./window_event"
 
 module Espresso
@@ -6,8 +5,6 @@ module Espresso
   # Restored does not mean the window is in a non-maximized windowed state.
   # A window could be restored to a full screen or maximized state.
   struct WindowIconifyEvent < WindowEvent
-    include BoolConversion
-
     # Indicates whether the window is currently iconified (minimized).
     # When true, the window was just iconified.
     # When false, the window was just restored from being iconified.
@@ -16,7 +13,7 @@ module Espresso
     # Creates the event.
     protected def initialize(pointer, value)
       super(pointer)
-      @iconified = int_to_bool(value)
+      @iconified = value.to_bool
     end
 
     # Indicates whether the window is currently iconified (minimized).

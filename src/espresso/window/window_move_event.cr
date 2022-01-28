@@ -1,12 +1,9 @@
-require "../bool_conversion"
 require "../position"
 require "./window_event"
 
 module Espresso
   # Event triggered when the window is moved.
   struct WindowMoveEvent < WindowEvent
-    include BoolConversion
-
     # The new x-coordinate, in screen coordinates, of the upper-left corner
     # of the content area of the window.
     getter x : Int32

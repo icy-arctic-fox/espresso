@@ -1,4 +1,3 @@
-require "../bool_conversion"
 require "../client_api"
 require "../context_creation_api"
 require "../context_robustness"
@@ -10,7 +9,6 @@ require "../window"
 module Espresso
   # Simplifies creation of windows with the numerous options (hints) available.
   class WindowBuilder
-    include BoolConversion
     include ErrorHandling
 
     @hints = [] of Hint
@@ -25,7 +23,7 @@ module Espresso
            .gsub(/_GL/, "GL").downcase %}
 
       def {{method_name}}=(flag)
-        value = bool_to_int(flag).to_i
+        value = LibGLFW::Bool.new(flag).to_i
         @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value)
       end
 

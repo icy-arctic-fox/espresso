@@ -6,7 +6,6 @@ require "./espresso/**"
 module Espresso
   extend self
   include ErrorHandling
-  include BoolConversion
 
   # Current version of the shard.
   VERSION = {{ `shards version "#{__DIR__}"`.stringify.chomp }}
@@ -49,7 +48,7 @@ module Espresso
   # Utility method for setting an initialization hint.
   # Converts *flag* from a boolean to an GLFW boolean integer and sets the corresponding *hint*.
   private def init_hint(hint, flag)
-    value = bool_to_int(flag)
+    value = LibGLFW::Bool.new(flag)
     LibGLFW.init_hint(hint, value)
   end
 

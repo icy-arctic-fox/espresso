@@ -1,4 +1,3 @@
-require "../bool_conversion"
 require "../error_handling"
 require "../event_handling"
 require "./key"
@@ -19,7 +18,6 @@ module Espresso
   # but your users are likely not all using the same keyboard layout,
   # input method or even operating system as you.
   struct Keyboard
-    include BoolConversion
     include ErrorHandling
     include EventHandling
 
@@ -126,7 +124,7 @@ module Espresso
     # See also: `#sticky=`
     def sticky?
       value = expect_truthy { LibGLFW.get_input_mode(@pointer, LibGLFW::InputMode::StickyKeys) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Enables or disables sticky keys.
@@ -147,7 +145,7 @@ module Espresso
     #
     # See also: `#sticky?`
     def sticky=(flag)
-      value = bool_to_int(flag)
+      value = LibGLFW::Bool.new(flag)
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::StickyKeys, value) }
     end
 
@@ -158,7 +156,7 @@ module Espresso
     # and the `ModifierKey::NumLock` flag when Num Lock was on.
     def lock_key_modifiers?
       value = expect_truthy { LibGLFW.get_input_mode(@pointer, LibGLFW::InputMode::LockKeyMods) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Enables or disables lock key modifier flags.
@@ -167,7 +165,7 @@ module Espresso
     # when the event was generated with Caps Lock on,
     # and the `ModifierKey::NumLock` flag when Num Lock was on.
     def lock_key_modifiers=(flag)
-      value = bool_to_int(flag)
+      value = LibGLFW::Bool.new(flag)
       checked { LibGLFW.set_input_mode(@pointer, LibGLFW::InputMode::LockKeyMods, value) }
     end
 

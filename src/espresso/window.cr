@@ -1,4 +1,3 @@
-require "./bool_conversion"
 require "./bounds"
 require "./error_handling"
 require "./event_handling"
@@ -119,7 +118,6 @@ module Espresso
   # **Wayland:** Screensaver inhibition requires the idle-inhibit protocol
   # to be implemented in the user's compositor.
   struct Window
-    include BoolConversion
     include ErrorHandling
     include EventHandling
 
@@ -132,7 +130,7 @@ module Espresso
               .gsub(/_GL/, "GL").downcase}}?
         attribute = LibGLFW::WindowAttribute::{{name.id}}
         value = expect_truthy { LibGLFW.get_window_attrib(@pointer, attribute) }
-        int_to_bool(value)
+        value.to_bool
       end
     end
 
@@ -170,7 +168,7 @@ module Espresso
               .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
               .gsub(/_GL/, "GL").downcase}}=(flag)
         attribute = LibGLFW::WindowAttribute::{{name.id}}
-        value = bool_to_int(flag)
+        value = LibGLFW::Bool.new(flag)
         checked { LibGLFW.set_window_attrib(@pointer, attribute, value) }
       end
     end
@@ -584,7 +582,7 @@ module Espresso
     # See also: `#closing=`
     def closing?
       value = checked { LibGLFW.window_should_close(@pointer) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Sets whether the window should be closed.
@@ -593,7 +591,7 @@ module Espresso
     #
     # See also: `#closing?`
     def closing=(flag)
-      value = bool_to_int(flag)
+      value = LibGLFW::Bool.new(flag)
       checked { LibGLFW.set_window_should_close(@pointer, value) }
     end
 

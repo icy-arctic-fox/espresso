@@ -1,4 +1,3 @@
-require "../bool_conversion"
 require "../error_handling"
 require "./button_state"
 require "./gamepad_state"
@@ -22,7 +21,6 @@ module Espresso
   # However, if you want joystick connection and disconnection events reliably delivered
   # to the joystick `#on_connect` and `#on_disconnect` events, then you must process events.
   struct Joystick
-    include BoolConversion
     include ErrorHandling
 
     # Creates a reference to a joystick with the specified ID.
@@ -65,7 +63,7 @@ module Espresso
     # as they all check for presence before performing any other work.
     def connected?
       value = expect_truthy { LibGLFW.joystick_present(@id) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Retrieves the values of all axes of this joystick.
@@ -254,7 +252,7 @@ module Espresso
     # Call `#connected?` to check if a joystick is present regardless of whether it has a mapping.
     def gamepad?
       value = expect_truthy { LibGLFW.joystick_is_gamepad(@id) }
-      int_to_bool(value)
+      value.to_bool
     end
 
     # Retrieves the state of the specified joystick remapped to an Xbox-like gamepad.
@@ -267,7 +265,7 @@ module Espresso
     def state? : GamepadState?
       state = uninitialized LibGLFW::GamepadState
       result = expect_truthy { LibGLFW.get_gamepad_state(@id, pointerof(state)) }
-      int_to_bool(result) ? GamepadState.new(state) : nil
+      result.to_bool ? GamepadState.new(state) : nil
     end
 
     # Retrieves the state of the specified joystick remapped to an Xbox-like gamepad.
