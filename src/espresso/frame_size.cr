@@ -19,15 +19,8 @@ module Espresso
 
     # Creates a string representation of the frame size.
     def to_s(io)
-      io << "(Left: "
-      io << @left
-      io << ", Top: "
-      io << @top
-      io << ", Right: "
-      io << @right
-      io << ", Bottom: "
-      io << @bottom
-      io << ')'
+      io << "(Left: " << @left << ", Top: " << @top
+      io << ", Right: " << @right << ", Bottom: " << @bottom << ')'
     end
   end
 end

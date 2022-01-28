@@ -15,9 +15,7 @@ module Espresso
 
     # Creates a string representation of the size.
     def to_s(io)
-      io << @width
-      io << 'x'
-      io << @height
+      io << @width << 'x' << @height
     end
   end
 end

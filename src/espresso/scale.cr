@@ -19,11 +19,7 @@ module Espresso
 
     # Creates a string representation of the scale.
     def to_s(io)
-      io << '('
-      io << @x
-      io << "x, "
-      io << @y
-      io << "x)"
+      io << '(' << @x << "x, " << @y << "x)"
     end
   end
 end

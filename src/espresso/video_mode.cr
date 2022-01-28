@@ -50,20 +50,9 @@ module Espresso
 
     # Creates a string representation of the video mode.
     def to_s(io)
-      io << @width
-      io << 'x'
-      io << @height
-      io << 'x'
-      io << depth
-      io << '@'
-      io << @refresh_rate
-      io << "Hz (R"
-      io << @red
-      io << 'G'
-      io << @green
-      io << 'B'
-      io << @blue
-      io << ')'
+      io << @width << 'x' << @height << 'x' << depth
+      io << '@' << @refresh_rate << "Hz (R"
+      io << @red << 'G' << @green << 'B' << @blue << ')'
     end
   end
 end

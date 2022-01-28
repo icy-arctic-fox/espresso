@@ -15,11 +15,7 @@ module Espresso
 
     # Creates a string representation of the position.
     def to_s(io)
-      io << '('
-      io << @x
-      io << ", "
-      io << @y
-      io << ')'
+      io << '(' << @x << ", " << @y << ')'
     end
   end
 end
