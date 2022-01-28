@@ -267,7 +267,7 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
-      pointer = ErrorHandling.static_expect_truthy do
+      pointer = expect_truthy do
         LibGLFW.create_window(width, height, title, monitor, nil)
       end
       Window.new(pointer)
@@ -284,7 +284,7 @@ module Espresso
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
     def self.full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
-      pointer = ErrorHandling.static_expect_truthy do
+      pointer = expect_truthy do
         LibGLFW.create_window(width, height, title, monitor, share)
       end
       Window.new(pointer)
@@ -1086,7 +1086,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `FormatUnavailableError`.
     def self.clipboard : String
-      chars = ErrorHandling.static_expect_truthy { LibGLFW.get_clipboard_string(nil) }
+      chars = expect_truthy { LibGLFW.get_clipboard_string(nil) }
       String.new(chars)
     end
 
@@ -1095,7 +1095,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.clipboard=(string)
-      ErrorHandling.static_checked { LibGLFW.set_clipboard_string(nil, string) }
+      checked { LibGLFW.set_clipboard_string(nil, string) }
     end
 
     # Retrieves the contents of the system clipboard,
@@ -1503,7 +1503,7 @@ module Espresso
     #
     # See also: `#current!`
     def self.current? : Window?
-      pointer = ErrorHandling.static_expect_truthy { LibGLFW.get_current_context }
+      pointer = expect_truthy { LibGLFW.get_current_context }
       pointer ? Window.new(pointer) : nil
     end
 
@@ -1539,7 +1539,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.poll_events : Nil
-      ErrorHandling.static_checked { LibGLFW.poll_events }
+      checked { LibGLFW.poll_events }
     end
 
     # Puts the calling thread to sleep until at least one event is available in the event queue.
@@ -1566,7 +1566,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.wait_events : Nil
-      ErrorHandling.static_checked { LibGLFW.wait_events }
+      checked { LibGLFW.wait_events }
     end
 
     # Puts the calling thread to sleep until at least one event is available in the event queue,
@@ -1597,7 +1597,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError`, `PlatformError`, and `ArgumentError`.
     def self.wait_events(timeout) : Nil
-      ErrorHandling.static_checked { LibGLFW.wait_events_timeout(timeout) }
+      checked { LibGLFW.wait_events_timeout(timeout) }
     rescue ex : InvalidValueError
       raise ArgumentError.new(ex.message)
     end
@@ -1607,7 +1607,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.post_empty_event : Nil
-      ErrorHandling.static_checked { LibGLFW.post_empty_event }
+      checked { LibGLFW.post_empty_event }
     end
 
     # Sets the swap interval for the current OpenGL or OpenGL ES context,
@@ -1635,7 +1635,7 @@ module Espresso
     # Some GPU drivers do not honor the requested swap interval,
     # either because of a user setting that overrides the application's request or due to bugs in the driver.
     def self.swap_interval=(interval)
-      ErrorHandling.static_checked { LibGLFW.swap_interval(interval) }
+      checked { LibGLFW.swap_interval(interval) }
     end
   end
 end

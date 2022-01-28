@@ -3,8 +3,8 @@ require "./error_handling"
 module Espresso
   # High-resolution time input.
   class Timer
-    @accum = 0u64
-    @start = 0u64
+    @accum = 0_u64
+    @start = 0_u64
 
     # Indicates whether the timer is currently running.
     getter? running : Bool
@@ -45,7 +45,7 @@ module Espresso
     # Resets the timer back to zero.
     # The timer will continue running if it already was.
     def reset : Nil
-      @accum = 0u64
+      @accum = 0_u64
       @start = Timer.value
     end
 
@@ -57,19 +57,19 @@ module Espresso
     # Total elapsed time in nanoseconds (10^-9).
     # Might be rounded depending on the system's precision.
     def nanoseconds : Float64
-      value.to_f64 / (Timer.frequency / 1_000_000_000f64)
+      value.to_f64 / (Timer.frequency / 1_000_000_000_f64)
     end
 
     # Total elapsed time in microseconds (10^-6).
     # Might be rounded depending on the system's precision.
     def microseconds : Float64
-      value.to_f64 / (Timer.frequency / 1_000_000f64)
+      value.to_f64 / (Timer.frequency / 1_000_000_f64)
     end
 
     # Total elapsed time in milliseconds (10^-3).
     # Might be rounded depending on the system's precision.
     def milliseconds : Float64
-      value.to_f64 / (Timer.frequency / 1_000f64)
+      value.to_f64 / (Timer.frequency / 1_000_f64)
     end
 
     # Creates a `Time::Span` from the timer's value.
@@ -92,7 +92,7 @@ module Espresso
     # but is usually on the order of a few micro- or nanoseconds.
     # It uses the highest-resolution monotonic time source on each supported platform.
     def self.global
-      ErrorHandling.static_expect_not(0f64) { LibGLFW.get_time }
+      expect_not(0_f64) { LibGLFW.get_time }
     end
 
     # Sets the value (in seconds) of the GLFW timer.
@@ -105,21 +105,21 @@ module Espresso
     # and is due to implementations storing nanoseconds in 64 bits.
     # The limit may be increased in the future.
     def self.global=(time)
-      ErrorHandling.static_checked { LibGLFW.set_time(time) }
+      checked { LibGLFW.set_time(time) }
     end
 
     # Current value of the raw timer,
     # measured in `1 / frequency` seconds.
     # To get the frequency, call `#frequency`.
     def self.value
-      ErrorHandling.static_expect_not(0u64) { LibGLFW.get_timer_value }
+      expect_not(0_u64) { LibGLFW.get_timer_value }
     end
 
     # Frequency, in Hz, of the raw timer.
     #
     # See also: `Timer#value`.
     def self.frequency
-      ErrorHandling.static_expect_not(0u64) { LibGLFW.get_timer_frequency }
+      expect_not(0_u64) { LibGLFW.get_timer_frequency }
     end
   end
 end

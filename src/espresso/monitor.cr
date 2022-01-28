@@ -8,10 +8,10 @@ require "./size"
 require "./video_mode"
 
 module Espresso
-  # Reference to a display monitor or screen and information about it.
+  # Reference to a display or screen and information about it.
   #
-  # Instances of this type cannot be created by the end-user.
-  # To retrieve a monitor, use the `#primary` or `#all` methods.
+  # This type cannot be instantiated outside of Espresso.
+  # To retrieve a monitor, use the `.primary` or `.all` methods.
   struct Monitor
     include ErrorHandling
 
@@ -22,8 +22,8 @@ module Espresso
     # Attempts to retrieve the user's primary monitor.
     # If there's no monitors, then this returns nil.
     def self.primary? : Monitor?
-      pointer = ErrorHandling.static_expect_truthy { LibGLFW.get_primary_monitor }
-      pointer ? Monitor.new(pointer) : nil
+      pointer = expect_truthy { LibGLFW.get_primary_monitor }
+      pointer ? new(pointer) : nil
     end
 
     # Retrieves the user's primary monitor.
@@ -40,13 +40,13 @@ module Espresso
     # when a monitor is connected or disconnected.
     def self.all : Enumerable(Monitor)
       count = uninitialized Int32
-      pointers = ErrorHandling.static_expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
+      pointers = expect_truthy { LibGLFW.get_monitors(pointerof(count)) }
       return [] of Monitor unless pointers # nil is returned if there's no monitors.
 
       # Use a slice to safely traverse the C-style array.
       # Map the pointers to Monitor structs.
       slice = Slice.new(pointers, count, read_only: true)
-      slice.map { |pointer| Monitor.new(pointer) }
+      slice.map(read_only: true) { |pointer| new(pointer) }
     end
 
     # Position, in screen coordinates, of the upper-left corner of the monitor.
@@ -155,7 +155,7 @@ module Espresso
       count = uninitialized Int32
       video_modes_pointer = expect_truthy { LibGLFW.get_video_modes(@pointer, pointerof(count)) }
       video_modes = Slice.new(video_modes_pointer, count, read_only: true)
-      video_modes.map { |video_mode| VideoMode.new(video_mode) }
+      video_modes.map(read_only: true) { |video_mode| VideoMode.new(video_mode) }
     end
 
     # Retrieves the currently active video mode for the monitor.
@@ -222,9 +222,7 @@ module Espresso
 
     # String representation of the monitor.
     def to_s(io)
-      io << "Monitor("
-      io << name
-      io << ')'
+      io << "Monitor(" << name << ')'
     end
 
     # Returns the underlying GLFW monitor pointer.
