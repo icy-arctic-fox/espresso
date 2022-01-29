@@ -19,6 +19,15 @@ module Espresso
     #
     # Used to store event listeners and pass-through a user pointer.
     private class UserData
+      # Pins all user data instances in static memory to prevent garbage collection.
+      protected class_getter instances = [] of self
+
+      # Creates user data for a monitor.
+      # Adds the user data to the pinned instances.
+      def initialize
+        self.class.instances << self
+      end
+
       # Custom data the end-user can attach to a monitor instance.
       property pointer = Pointer(Void).null
     end
@@ -42,6 +51,14 @@ module Espresso
 
     # Constructs the monitor reference with a *pointer* from GLFW.
     protected def initialize(@pointer : LibGLFW::Monitor, @user_data : UserData? = nil)
+    end
+
+    # Cleans up resources held by the monitor.
+    # Removes the pinned user data.
+    protected def destroy!
+      return unless user_data = @user_data
+
+      UserData.instances.delete(user_data)
     end
 
     # Attempts to retrieve the user's primary monitor.

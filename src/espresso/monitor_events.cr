@@ -21,7 +21,12 @@ module Espresso
       protected def self.call(*args)
         event = MonitorConnectEvent.new(*args)
         Monitor.connect.call(event)
-        event.monitor.user_data.disconnect.call(event) if event.disconnected?
+
+        if event.disconnected?
+          monitor = event.monitor
+          monitor.user_data.disconnect.call(event)
+          monitor.destroy!
+        end
       end
     end
 
