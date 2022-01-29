@@ -14,5 +14,12 @@ module Espresso
       @monitor = Monitor.new(pointer)
       @connected = event.connected?
     end
+
+    # Flag indicating whether the monitor was disconnected or connected.
+    #
+    # True means the monitor was disconnected, false means it was connected.
+    def disconnected?
+      !connected?
+    end
   end
 end
