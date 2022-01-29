@@ -1,5 +1,8 @@
 require "./errors/*"
 
+# Don't show this file in stack traces.
+Exception::CallStack.skip(__FILE__)
+
 module Espresso
   # Mix-in for handling errors from GLFW.
   private module ErrorHandling
