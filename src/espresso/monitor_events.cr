@@ -23,9 +23,8 @@ module Espresso
         Monitor.connect.call(event)
 
         if event.disconnected?
-          monitor = event.monitor
-          monitor.user_data.disconnect.call(event)
-          monitor.destroy!
+          event.monitor.user_data.disconnect.call(event)
+          event.monitor.destroy!
         end
       end
     end
