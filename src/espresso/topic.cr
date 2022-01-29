@@ -23,6 +23,11 @@ module Espresso
     end
 
     # Notifies subscribers than an event has occurred.
+    protected def call(event : EventType) : Nil
+      @listeners.each &.call(event)
+    end
+
+    # Notifies subscribers than an event has occurred.
     # A block must be provided that constructs the event.
     protected def call : Nil
       return if @listeners.empty?
