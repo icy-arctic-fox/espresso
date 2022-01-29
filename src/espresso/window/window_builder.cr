@@ -11,70 +11,78 @@ module Espresso
   class WindowBuilder
     include ErrorHandling
 
+    # Information about an integer-based hint.
+    private struct Hint
+      include ErrorHandling
+
+      # Creates the hint.
+      # The *hint* is the window hint to set,
+      # and *value* is the desired value when the window is created.
+      def initialize(@hint : LibGLFW::WindowHint, @value : Int32)
+      end
+
+      # Applies the hint to GLFW.
+      def apply
+        checked { LibGLFW.window_hint(@hint, @value) }
+      end
+    end
+
+    # Information about a string-based hint.
+    private struct StringHint
+      include ErrorHandling
+
+      # Creates the hint.
+      # The *hint* is the window hint to set,
+      # and *value* is the desired value when the window is created.
+      def initialize(@hint : LibGLFW::WindowHint, @value : String)
+      end
+
+      # Applies the hint to GLFW.
+      def apply
+        checked { LibGLFW.window_hint_string(@hint, @value) }
+      end
+    end
+
     @hints = [] of Hint
     @string_hints = [] of StringHint
 
-    # Defines a setter method that specifies a flag for a boolean hint.
-    # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
-    # The setter method name is derived from *name*.
-    private macro bool_hint(name)
-      {% method_name = name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-           .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-           .gsub(/_GL/, "GL").downcase %}
+    # Defines one or more methods that set a hint.
+    # The *decl* is a type declaration in the form `name : Type`.
+    # The type for *decl* should be `Bool`, `Int`, `String`, or an enum.
+    # It can also be nillable, which indicates GLFW accepts "don't care."
+    # The methods are named by the name specified in *decl*.
+    # By default, the hint will use the name as a symbol.
+    # A value can be given in *decl* to manually specify an enum value from `LibGLFW::WindowHint`.
+    private macro def_hint(decl)
+      {% name = decl.var
+         type = decl.type.resolve
+         hint = (decl.value || decl.var.id.symbolize) %}
 
-      def {{method_name}}=(flag)
-        value = LibGLFW::Bool.new(flag).to_i
-        @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value)
+      def {{name}}=({{name}} : {{type}})
+        {% if type >= Bool %}
+          value = LibGLFW::Bool.new({{name}})
+          @hints << Hint.new({{hint}}, value)
+        {% elsif type >= String %}
+          @string_hints << StringHint.new({{hint}}, {{name}})
+        {% else %}
+          @hints << Hint.new({{hint}}, {{name}}.to_i32)
+        {% end %}
+        {{name}}
       end
 
-      def {{method_name}}
-        self.method_name = true
-      end
-    end
-
-    # Defines a setter method that accepts an integer for a hint.
-    # Only non-negative integers are allowed.
-    # An error is raised when a negative value is provided.
-    # The setter also accepts nil, which sets the hint to "don't care."
-    # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
-    # The setter method name is derived from *name*.
-    private macro int_hint(name)
-      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/_GL/, "GL").downcase}}=(value)
-        type = LibGLFW::WindowHint::{{name.id}}
-        hint = if value
-          raise ArgumentError.new("Hint value must be non-negative") if value < 0
-          Hint.new(type, value)
-        else
-          Hint.new(type, LibGLFW::DONT_CARE)
+      {% if type >= Nil %}
+        def {{name}}=({{name}} : Nil)
+          @hints << Hint.new({{hint}}, LibGLFW::DONT_CARE)
+          {{name}}
         end
-        @hints << hint
-      end
-    end
+      {% end %}
 
-    # Defines a setter method that accepts a string for a hint.
-    # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
-    # The setter method name is derived from *name*.
-    private macro string_hint(name)
-      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/_GL/, "GL").downcase}}=(value)
-        @string_hints << StringHint.new(LibGLFW::WindowHint::{{name.id}}, value)
-      end
-    end
-
-    # Defines a setter method that accepts a pre-defined enum for a hint.
-    # The *name* is the `LibGLFW::WindowHint` enum (without prefix) to set.
-    # The setter method name is derived from *name*.
-    # The *enum_name* is the type name of the enum the value must be.
-    # The enum value is converted using `Enum#to_i`, so the original GLFW values should be used.
-    private macro enum_hint(name, enum_name)
-      def {{name.id.gsub(/([A-Z]+)([A-Z][a-z])/, "\\1_\\2")
-              .gsub(/([a-z\d])([A-Z])/, "\\1_\\2")
-              .gsub(/_GL/, "GL").downcase}}=(value : {{enum_name.id}})
-        @hints << Hint.new(LibGLFW::WindowHint::{{name.id}}, value.to_i)
-      end
+      {% if type >= Bool %}
+        def {{name}} : self
+          self.{{name}} = true
+          self
+        end
+      {% end %}
     end
 
     # Creates the window with all previously specified hints.
@@ -342,16 +350,21 @@ module Espresso
       reset_hints
     end
 
+    # Resets all window hints to their defaults.
+    private def reset_hints
+      checked { LibGLFW.default_window_hints }
+    end
+
     # Specifies whether the windowed mode window will be resizable *by the user*.
     # The window will still be resizable using the `Window.size=` setter.
     # Possible values are true and false.
     # This hint is ignored for full screen and undecorated windows.
-    bool_hint Resizable
+    def_hint resizable : Bool
 
     # Specifies whether the windowed mode window will be initially visible.
     # Possible values are true and false.
     # This hint is ignored for full screen windows.
-    bool_hint Visible
+    def_hint visible : Bool
 
     # Specifies whether the windowed mode window will have window decorations
     # such as a border, a close widget, etc.
@@ -359,46 +372,46 @@ module Espresso
     # but will still allow the user to generate close events on some platforms.
     # Possible values are true and false.
     # This hint is ignored for full screen windows.
-    bool_hint Decorated
+    def_hint decorated : Bool
 
     # Specifies whether the windowed mode window will be given input focus when created.
     # Possible values are true and false.
     # This hint is ignored for full screen and initially hidden windows.
-    bool_hint Focused
+    def_hint focused : Bool
 
     # Specifies whether the full screen window will automatically iconify and restore
     # the previous video mode on input focus loss.
     # Possible values are true and false.
     # This hint is ignored for windowed mode windows.
-    bool_hint AutoIconify
+    def_hint auto_iconify : Bool
 
     # Specifies whether the windowed mode window will be floating above other regular windows,
     # also called topmost or always-on-top.
     # This is intended primarily for debugging purposes and cannot be used to implement proper full screen windows.
     # Possible values are true and false.
     # This hint is ignored for full screen windows.
-    bool_hint Floating
+    def_hint floating : Bool
 
     # Specifies whether the windowed mode window will be maximized when created.
     # Possible values are true and false.
     # This hint is ignored for full screen windows.
-    bool_hint Maximized
+    def_hint maximized : Bool
 
     # Specifies whether the cursor should be centered over newly created full screen windows.
     # Possible values are true and false.
     # This hint is ignored for windowed mode windows.
-    bool_hint CenterCursor
+    def_hint center_cursor : Bool
 
     # Specifies whether the window framebuffer will be transparent.
     # If enabled and supported by the system,
     # the window framebuffer alpha channel will be used to combine the framebuffer with the background.
     # This does not affect window decorations.
     # Possible values are true and false.
-    bool_hint TransparentFramebuffer
+    def_hint transparent_framebuffer : Bool
 
     # Specifies whether the window will be given input focus when `Window#show` is called.
     # Possible values are true and false.
-    bool_hint FocusOnShow
+    def_hint focus_on_show : Bool
 
     # Specifies whether the window content area should be resized
     # based on the monitor content scale of any monitor it is placed on.
@@ -408,82 +421,82 @@ module Espresso
     # This hint only has an effect on platforms
     # where screen coordinates and pixels always map 1:1 such as Windows and X11.
     # On platforms like macOS the resolution of the framebuffer is changed independently of the window size.
-    bool_hint ScaleToMonitor
+    def_hint scale_to_monitor : Bool
 
     # Specifies the desired bit depth of the red color component for the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint RedBits
+    def_hint red_bits : Int?
 
     # Specifies the desired bit depth of the green color component for the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint GreenBits
+    def_hint green_bits : Int?
 
     # Specifies the desired bit depth of the blue color component for the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint BlueBits
+    def_hint blue_bits : Int?
 
     # Specifies the desired bit depth of the alpha color component for the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint AlphaBits
+    def_hint alpha_bits : Int?
 
     # Specifies the desired bits used for the depth buffer of the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint DepthBits
+    def_hint depth_bits : Int?
 
     # Specifies the desired bits used for the stencil buffer of the default framebuffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
-    int_hint StencilBits
+    def_hint stencil_bits : Int?
 
     # Specifies the desired bit depths of the red component of the accumulation buffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
     #
     # Accumulation buffers are a legacy OpenGL feature and should not be used in new code.
-    int_hint AccumRedBits
+    def_hint accum_red_bits : Int?
 
     # Specifies the desired bit depths of the green component of the accumulation buffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
     #
     # Accumulation buffers are a legacy OpenGL feature and should not be used in new code.
-    int_hint AccumGreenBits
+    def_hint accum_green_bits : Int?
 
     # Specifies the desired bit depths of the blue component of the accumulation buffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
     #
     # Accumulation buffers are a legacy OpenGL feature and should not be used in new code.
-    int_hint AccumBlueBits
+    def_hint accum_blue_bits : Int?
 
     # Specifies the desired bit depths of the alpha component of the accumulation buffer.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
     #
     # Accumulation buffers are a legacy OpenGL feature and should not be used in new code.
-    int_hint AccumAlphaBits
+    def_hint accum_alpha_bits : Int?
 
     # Specifies the desired number of auxiliary buffers.
     # Possible values are non-negative integers and nil.
     # Providing nil means the application has no preference (don't care).
     #
     # Auxiliary buffers are a legacy OpenGL feature and should not be used in new code.
-    int_hint AuxBuffers
+    def_hint aux_buffers : Int?
 
     # Specifies whether to use OpenGL stereoscopic rendering.
     # Possible values are true and false.
     # This is a hard constraint.
-    bool_hint Stereo
+    def_hint stereo : Bool
 
     # Specifies the desired number of samples to use for multisampling.
     # Zero disables multisampling.
     # A value of nil means the application has no preference (don't care).
-    int_hint Samples
+    def_hint samples : Int?
 
     # Specifies whether the framebuffer should be sRGB capable.
     # Possible values are true and false.
@@ -494,23 +507,23 @@ module Espresso
     #
     # **OpenGL ES:** If enabled and supported by the system,
     # the context will always have sRGB rendering enabled.
-    bool_hint SRGBCapable
+    def_hint srgb_capable : Bool = LibGLFW::WindowHint::SRGBCapable
 
     # Specifies whether the framebuffer should be double buffered.
     # You nearly always want to use double buffering.
     # This is a hard constraint.
     # Possible values are true and false.
-    bool_hint DoubleBuffer
+    def_hint double_buffer : Bool
 
     # Specifies the desired refresh rate for full screen windows.
     # A value of nil means the highest available refresh rate will be used.
     # This hint is ignored for windowed mode windows.
-    int_hint RefreshRate
+    def_hint refresh_rate : Int?
 
     # Specifies which client API to create the context for.
     # Possible values are in the `ClientAPI` enum.
     # This is a hard constraint.
-    enum_hint ClientAPI, ClientAPI
+    def_hint client_api : ClientAPI
 
     # Specifies which context creation API to use to create the context.
     # Possible values are in the `ContextCreationAPI` enum.
@@ -525,7 +538,7 @@ module Espresso
     # does not update the window contents when its buffers are swapped.
     # Use OpenGL functions or the OSMesa native access functions `glfwGetOSMesaColorBuffer`
     # and `glfwGetOSMesaDepthBuffer` to retrieve the framebuffer contents.
-    enum_hint ContextCreationAPI, ContextCreationAPI
+    def_hint context_creation_api : ContextCreationAPI
 
     # Specifies the client API version that the created context must be compatible with.
     # The exact behavior of these hints depend on the request client API.
@@ -544,52 +557,52 @@ module Espresso
     # Additionally, OpenGL ES 1.x cannot be returned if 2.0 or later was requested, and vice versa.
     # This is because OpenGL ES 3.x is backward compatible with 2.0,
     # but OpenGL ES 2.0 is not backward compatible with 1.x.
-    def context_version(major, minor) : Nil
-      @hints << Hint.new(LibGLFW::WindowHint::ContextVersionMajor, major)
-      @hints << Hint.new(LibGLFW::WindowHint::ContextVersionMinor, minor)
+    def context_version(major : Int, minor : Int) : Nil
+      @hints << Hint.new(:context_version_major, major.to_i32)
+      @hints << Hint.new(:context_version_minor, minor.to_i32)
     end
 
     # Specifies whether the OpenGL context should be forward-compatible,
     # i.e. one where all functionality deprecated in the requested version of OpenGL is removed.
     # This must only be used if the requested OpenGL version is 3.0 or above.
     # If OpenGL ES is requested, this hint is ignored.
-    bool_hint OpenGLForwardCompat
+    def_hint forward_compatible : Bool = LibGLFW::WindowHint::OpenGLForwardCompat
 
     # Specifies whether to create a debug OpenGL context,
     # which may have additional error and performance issue reporting functionality.
     # Possible values are true and false.
     # If OpenGL ES is requested, this hint is ignored.
-    bool_hint OpenGLDebugContext
+    def_hint debug : Bool = LibGLFW::WindowHint::OpenGLDebugContext
 
     # Specifies which OpenGL profile to create the context for.
     # Possible values are in the `OpenGLProfile` enum.
     # If requesting an OpenGL version below 3.2,
     # `OpenGLProfile::Any` must be used.
     # If OpenGL ES is requested, this hint is ignored.
-    enum_hint OpenGLProfile, OpenGLProfile
+    def_hint profile : OpenGLProfile = LibGLFW::WindowHint::OpenGLProfile
 
     # Specifies the robustness strategy to be used by the context.
     # This can be one of values from the `ContextRobustness` enum.
-    enum_hint ContextRobustness, ContextRobustness
+    def_hint robustness : ContextRobustness = LibGLFW::WindowHint::ContextRobustness
 
     # Specifies the release behavior to be used by the context.
     # Possible values are in the `ReleaseBehavior` enum.
-    enum_hint ContextReleaseBehavior, ReleaseBehavior
+    def_hint release_behavior : ReleaseBehavior = LibGLFW::WindowHint::ContextReleaseBehavior
 
     # Specifies whether errors should be generated by the context.
     # Possible values are true and false.
     # If enabled, situations that would have generated errors instead cause undefined behavior.
-    bool_hint ContextNoError
+    def_hint no_error : Bool = LibGLFW::WindowHint::ContextNoError
 
     # Specifies whether to use full resolution framebuffers on Retina displays.
     # Possible values are true and false.
     # This is applicable only on macOS platforms.
-    bool_hint CocoaRetinaFramebuffer
+    def_hint cocoa_retina_framebuffer : Bool
 
     # Specifies the UTF-8 encoded name to use for autosaving the window frame,
     # or if empty disables frame autosaving for the window.
     # This is applicable only on macOS platforms.
-    string_hint CocoaFrameName
+    def_hint cocoa_frame_name : String
 
     # Specifies whether to in Automatic Graphics Switching,
     # i.e. to allow the system to choose the integrated GPU for the OpenGL context
@@ -604,51 +617,14 @@ module Espresso
     # A bundled application that wishes to participate in Automatic Graphics Switching
     # should also declare this in its `Info.plist`
     # by setting the `NSSupportsAutomaticGraphicsSwitching` key to true.
-    bool_hint CocoaGraphicsSwitching
+    def_hint cocoa_graphics_switching : Bool
 
     # Specifies the desired ASCII encoded class part the ICCCM `WM_CLASS` window property.
     # This is applicable only on X11 platforms.
-    string_hint X11ClassName
+    def_hint x11_class_name : String
 
     # Specifies the desired ASCII encoded instance part of the ICCCM `WM_CLASS` window property.
     # This is applicable only on X11 platforms.
-    string_hint X11InstanceName
-
-    # Resets all window hints to their defaults.
-    private def reset_hints
-      checked { LibGLFW.default_window_hints }
-    end
-
-    # Information about an integer-based hint.
-    private struct Hint
-      include ErrorHandling
-
-      # Creates the hint.
-      # The *hint* is the window hint to set,
-      # and *value* is the desired value when the window is created.
-      def initialize(@hint : LibGLFW::WindowHint, @value : Int32)
-      end
-
-      # Applies the hint to GLFW.
-      def apply
-        checked { LibGLFW.window_hint(@hint, @value) }
-      end
-    end
-
-    # Information about a string-based hint.
-    private struct StringHint
-      include ErrorHandling
-
-      # Creates the hint.
-      # The *hint* is the window hint to set,
-      # and *value* is the desired value when the window is created.
-      def initialize(@hint : LibGLFW::WindowHint, @value : String)
-      end
-
-      # Applies the hint to GLFW.
-      def apply
-        checked { LibGLFW.window_hint_string(@hint, @value) }
-      end
-    end
+    def_hint x11_instance_name : String
   end
 end
