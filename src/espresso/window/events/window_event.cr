@@ -1,4 +1,4 @@
-require "../window"
+require "../../window"
 
 module Espresso
   # Base for all events that are associated with a window.

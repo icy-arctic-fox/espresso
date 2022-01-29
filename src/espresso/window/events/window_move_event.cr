@@ -1,4 +1,4 @@
-require "../position"
+require "../../position"
 require "./window_event"
 
 module Espresso

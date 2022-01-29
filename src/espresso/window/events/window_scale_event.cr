@@ -1,4 +1,4 @@
-require "../scale"
+require "../../scale"
 require "./window_event"
 
 module Espresso
