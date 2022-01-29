@@ -15,8 +15,33 @@ module Espresso
   struct Monitor
     include ErrorHandling
 
+    # Data stored alongside a monitor instance.
+    #
+    # Used to store event listeners and pass-through a user pointer.
+    private class UserData
+      # Custom data the end-user can attach to a monitor instance.
+      property pointer = Pointer(Void).null
+    end
+
+    # Data stored alongside the monitor instance in GLFW as the user pointer.
+    protected getter user_data do
+      # Retrieve the monitor's user pointer.
+      pointer = checked { LibGLFW.get_monitor_user_pointer(@pointer) }
+      # If it references something (the user data)...
+      if pointer
+        # Unbox it.
+        Box(UserData).unbox(pointer)
+      else
+        # Otherwise, create new user data and set it.
+        UserData.new.tap do |user_data|
+          box = Box.box(user_data)
+          checked { LibGLFW.set_monitor_user_pointer(@pointer, box) }
+        end
+      end
+    end
+
     # Constructs the monitor reference with a *pointer* from GLFW.
-    protected def initialize(@pointer : LibGLFW::Monitor)
+    protected def initialize(@pointer : LibGLFW::Monitor, @user_data : UserData? = nil)
     end
 
     # Attempts to retrieve the user's primary monitor.
@@ -134,7 +159,7 @@ module Espresso
     # This method may be called from the monitor connect/disconnect event,
     # even if the monitor is being disconnected.
     def user_pointer : Pointer
-      checked { LibGLFW.get_monitor_user_pointer(@pointer) }
+      user_data.pointer
     end
 
     # Updates the value of the user-defined pointer for this monitor.
@@ -142,7 +167,7 @@ module Espresso
     # The value will be kept until the monitor is disconnected or until the library is terminated.
     # The initial value is nil.
     def user_pointer=(pointer)
-      checked { LibGLFW.set_monitor_user_pointer(@pointer, pointer) }
+      user_data.pointer = pointer
     end
 
     # List of all video modes supported by the monitor.
