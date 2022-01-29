@@ -65,17 +65,11 @@ module Espresso
         {% elsif type >= String %}
           @string_hints << StringHint.new({{hint}}, {{name}})
         {% else %}
-          @hints << Hint.new({{hint}}, {{name}}.to_i32)
+          value = {{name}} || LibGLFW::DONT_CARE
+          @hints << Hint.new({{hint}}, value.to_i32)
         {% end %}
         {{name}}
       end
-
-      {% if type >= Nil %}
-        def {{name}}=({{name}} : Nil)
-          @hints << Hint.new({{hint}}, LibGLFW::DONT_CARE)
-          {{name}}
-        end
-      {% end %}
 
       {% if type >= Bool %}
         def {{name}} : self
