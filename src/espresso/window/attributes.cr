@@ -45,7 +45,6 @@ module Espresso
       end
     end
 
-
     # Indicates whether this window has input focus.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
