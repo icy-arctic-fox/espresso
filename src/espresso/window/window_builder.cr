@@ -8,7 +8,7 @@ require "../window"
 
 module Espresso
   # Simplifies creation of windows with the numerous options (hints) available.
-  class WindowBuilder
+  struct WindowBuilder
     include ErrorHandling
 
     # Information about an integer-based hint.
