@@ -1,11 +1,9 @@
 require "./bounds"
 require "./error_handling"
-require "./gamma_ramp"
 require "./errors/invalid_value_error"
 require "./position"
 require "./scale"
 require "./size"
-require "./video_mode"
 
 module Espresso
   # Reference to a display or screen and information about it.
@@ -273,3 +271,5 @@ module Espresso
     end
   end
 end
+
+require "./monitor/**"

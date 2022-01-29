@@ -1,15 +1,15 @@
-require "./error_handling"
+require "../error_handling"
+require "../topic"
 require "./monitor_connect_event"
-require "./topic"
 
 module Espresso
   struct Monitor
     # Tracks subscriptions and delegates monitor connection events.
-    private struct MonitorConnectTopic < Topic(MonitorConnectEvent)
+    private struct ConnectTopic < Topic(MonitorConnectEvent)
       include ErrorHandling
 
       private def register_callback(*_args)
-        checked { LibGLFW.set_monitor_callback(->MonitorConnectTopic.call) }
+        checked { LibGLFW.set_monitor_callback(->ConnectTopic.call) }
       end
 
       private def unregister_callback(*_args)
@@ -30,7 +30,7 @@ module Espresso
     end
 
     class UserData
-      getter disconnect = MonitorConnectTopic.new
+      getter disconnect = ConnectTopic.new
     end
 
     # Registers a listener to respond when this monitor is disconnected.
@@ -49,7 +49,7 @@ module Espresso
     end
 
     # Topic handling monitor connect and disconnect events for all monitors.
-    protected class_getter connect = MonitorConnectTopic.new
+    protected class_getter connect = ConnectTopic.new
 
     # Registers a listener to respond when a monitor is connected or disconnected.
     # The block of code passed to this method will be invoked when a monitor (dis)connects.
