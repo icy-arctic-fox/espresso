@@ -92,27 +92,12 @@ module Espresso
     # The *height* argument is the desired height, in screen coordinates, of the window.
     # This must be greater than zero.
     # The *title* is the initial, UTF-8 encoded window title.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title) : Window
-      apply_hints { Window.new(width, height, title) }
-    end
-
-    # Creates the window with all previously specified hints.
-    #
-    # The *width* argument is the desired width, in screen coordinates, of the window.
-    # This must be greater than zero.
-    # The *height* argument is the desired height, in screen coordinates, of the window.
-    # This must be greater than zero.
-    # The *title* is the initial, UTF-8 encoded window title.
     # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title, share) : Window
+    def build(width : Int32, height : Int32, title : String, share : Window? = nil) : Window
       apply_hints { Window.new(width, height, title, share) }
     end
 
@@ -125,34 +110,12 @@ module Espresso
     # The *height* argument is the desired height, in screen coordinates, of the window.
     # This must be greater than zero.
     # The *title* is the initial, UTF-8 encoded window title.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title)
-      build(width, height, title).tap do |window|
-        window.current!
-        yield window
-      ensure
-        window.destroy!
-      end
-    end
-
-    # Creates the window with all previously specified hints.
-    # The window is yielded to the block and automatically destroyed when the block completes.
-    # Additionally, the window's context is made current on the calling thread.
-    #
-    # The *width* argument is the desired width, in screen coordinates, of the window.
-    # This must be greater than zero.
-    # The *height* argument is the desired height, in screen coordinates, of the window.
-    # This must be greater than zero.
-    # The *title* is the initial, UTF-8 encoded window title.
     # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build(width, height, title, share)
+    def build(width : Int32, height : Int32, title : String, share : Window? = nil, & : Window -> _)
       build(width, height, title, share).tap do |window|
         window.current!
         yield window
@@ -164,43 +127,13 @@ module Espresso
     # Creates the window as full screen with all previously specified hints.
     #
     # The *title* is the initial, UTF-8 encoded window title.
-    #
-    # The primary monitor is used for the fullscreen window.
-    # The width and height of the window match the size of the monitor's current display mode.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String) : Window
-      apply_hints { Window.full_screen(title) }
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
     # The *monitor* is the display device to place the fullscreen window on.
-    #
-    # The width and height of the window match the size of the monitor's current display mode.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor) : Window
-      apply_hints { Window.full_screen(title, monitor) }
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
-    # The *monitor* is the display device to place the fullscreen window on.
-    # The *share* argument is the window whose context to share resources with.
-    #
-    # The width and height of the window match the size of the monitor's current display mode.
+    # The *width* and *height* specify the desired size of the window on the monitor.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, share : Window) : Window
+    def build_full_screen(title : String, monitor : Monitor = Monitor.primary, share : Window? = nil) : Window
       apply_hints { Window.full_screen(title, monitor, share) }
     end
 
@@ -209,68 +142,14 @@ module Espresso
     # The *title* is the initial, UTF-8 encoded window title.
     # The *monitor* is the display device to place the fullscreen window on.
     # The *width* and *height* specify the desired size of the window on the monitor.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32) : Window
-      apply_hints { Window.full_screen(title, monitor, width, height) }
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
-    # The *monitor* is the display device to place the fullscreen window on.
-    # The *width* and *height* specify the desired size of the window on the monitor.
     # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window) : Window
-      apply_hints { Window.full_screen(title, monitor, width, height, share) }
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    # The window is yielded to the block and automatically destroyed when the block completes.
-    # Additionally, the window's context is made current on the calling thread.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
-    #
-    # The primary monitor is used for the fullscreen window.
-    # The width and height of the window match the size of the monitor's current display mode.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String)
-      build_full_screen(title).tap do |window|
-        window.current!
-        yield window
-      ensure
-        window.destroy!
-      end
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    # The window is yielded to the block and automatically destroyed when the block completes.
-    # Additionally, the window's context is made current on the calling thread.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
-    # The *monitor* is the display device to place the fullscreen window on.
-    #
-    # The width and height of the window match the size of the monitor's current display mode.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor)
-      build_full_screen(title, monitor).tap do |window|
-        window.current!
-        yield window
-      ensure
-        window.destroy!
-      end
+    def build_full_screen(title : String, width : Int32, height : Int32,
+                          monitor : Monitor = Monitor.primary, share : Window? = nil) : Window
+      apply_hints { Window.full_screen(title, width, height, monitor, share) }
     end
 
     # Creates the window as full screen with all previously specified hints.
@@ -286,7 +165,7 @@ module Espresso
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, share : Window)
+    def build_full_screen(title : String, monitor : Monitor = Monitor.primary, share : Window? = nil, & : Window -> _)
       build_full_screen(title, monitor, share).tap do |window|
         window.current!
         yield window
@@ -302,33 +181,14 @@ module Espresso
     # The *title* is the initial, UTF-8 encoded window title.
     # The *monitor* is the display device to place the fullscreen window on.
     # The *width* and *height* specify the desired size of the window on the monitor.
-    #
-    # Possible errors that could be raised are:
-    # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
-    # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32)
-      build_full_screen(title, monitor, width, height).tap do |window|
-        window.current!
-        yield window
-      ensure
-        window.destroy!
-      end
-    end
-
-    # Creates the window as full screen with all previously specified hints.
-    # The window is yielded to the block and automatically destroyed when the block completes.
-    # Additionally, the window's context is made current on the calling thread.
-    #
-    # The *title* is the initial, UTF-8 encoded window title.
-    # The *monitor* is the display device to place the fullscreen window on.
-    # The *width* and *height* specify the desired size of the window on the monitor.
     # The *share* argument is the window whose context to share resources with.
     #
     # Possible errors that could be raised are:
     # `NotInitializedError`, `InvalidEnumError`, `InvalidValueError`, `APIUnavailableError`,
     # `VersionUnavailableError`, `FormatUnavailableError`, and `PlatformError`.
-    def build_full_screen(title : String, monitor : Monitor, width : Int32, height : Int32, share : Window)
-      build_full_screen(title, monitor, width, height, share).tap do |window|
+    def build_full_screen(title : String, width : Int32, height : Int32,
+                          monitor : Monitor = Monitor.primary, share : Window? = nil, & : Window -> _)
+      build_full_screen(title, width, height, monitor, share).tap do |window|
         window.current!
         yield window
       ensure
