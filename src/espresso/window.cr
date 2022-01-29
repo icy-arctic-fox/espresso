@@ -121,8 +121,42 @@ module Espresso
     include ErrorHandling
     include EventHandling
 
+    # Data stored alongside a window instance.
+    #
+    # Used to store event listeners and pass-through a user pointer.
+    private class UserData
+      # Pins all user data instances in static memory to prevent garbage collection.
+      protected class_getter instances = [] of self
+
+      # Creates user data for a window.
+      # Adds the user data to the pinned instances.
+      def initialize
+        self.class.instances << self
+      end
+
+      # Custom data the end-user can attach to a window instance.
+      property pointer = Pointer(Void).null
+    end
+
+    # Data stored alongside the window instance in GLFW as the user pointer.
+    protected getter user_data do
+      # Retrieve the window's user pointer.
+      pointer = checked { LibGLFW.get_window_user_pointer(@pointer) }
+      # If it references something (the user data)...
+      if pointer
+        # Unbox it.
+        Box(UserData).unbox(pointer)
+      else
+        # Otherwise, create new user data and set it.
+        UserData.new.tap do |user_data|
+          box = Box.box(user_data)
+          checked { LibGLFW.set_window_user_pointer(@pointer, box) }
+        end
+      end
+    end
+
     # Creates a window object by wrapping a GLFW window pointer.
-    protected def initialize(@pointer : LibGLFW::Window)
+    protected def initialize(@pointer : LibGLFW::Window, @user_data : UserData? = nil)
     end
 
     # Creates a window and its associated OpenGL or OpenGL ES context.
@@ -255,6 +289,9 @@ module Espresso
     def destroy! : Nil
       remove_all_listeners
       checked { LibGLFW.destroy_window(@pointer) }
+      return unless user_data = @user_data
+
+      UserData.instances.delete(user_data)
     end
 
     # Registers a listener to respond when the window is moved.
@@ -1056,7 +1093,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError`.
     def user_pointer : Pointer
-      expect_truthy { LibGLFW.get_window_user_pointer(@pointer, pointer) }
+      user_data.pointer
     end
 
     # Updates the value of the user-defined pointer for this window.
@@ -1066,7 +1103,7 @@ module Espresso
     #
     # Possible errors that could be raised are: `NotInitializedError`.
     def user_pointer=(pointer)
-      checked { LibGLFW.set_window_user_pointer(@pointer, pointer) }
+      user_data.pointer = pointer
     end
 
     # Swaps the front and back buffers of this window
