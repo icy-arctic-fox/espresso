@@ -1,3 +1,4 @@
+require "./error_handling"
 require "./monitor_connect_event"
 require "./topic"
 
@@ -5,12 +6,14 @@ module Espresso
   struct Monitor
     # Tracks subscriptions and delegates monitor connection events.
     private struct MonitorConnectTopic < Topic(MonitorConnectEvent)
+      include ErrorHandling
+
       private def register_callback(*_args)
-        LibGLFW.set_monitor_callback(->MonitorConnectTopic.call)
+        checked { LibGLFW.set_monitor_callback(->MonitorConnectTopic.call) }
       end
 
       private def unregister_callback(*_args)
-        LibGLFW.set_monitor_callback(nil)
+        checked { LibGLFW.set_monitor_callback(nil) }
       end
 
       # Method that GLFW will call when a monitor connection event occurs.
