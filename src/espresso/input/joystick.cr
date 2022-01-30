@@ -1,6 +1,5 @@
 require "../error_handling"
 require "./button_state"
-require "./gamepad_state"
 
 module Espresso
   # Exposes connected joysticks and controllers, with both referred to as joysticks.
@@ -337,10 +336,7 @@ module Espresso
 
     # String representation of the joystick.
     def to_s(io)
-      io << @id
-      io << '('
-      io << name
-      io << ')'
+      io << @id << '(' << name << ')'
     end
 
     # Returns the underlying joystick ID.
