@@ -7,14 +7,14 @@ module Espresso
          type = decl.type.resolve %}
 
       def on_{{name}}(&block : {{type}} ->)
-        user_data.{{name}}.add_listener(block, @pointer)
+        user_data.%topic.add_listener(block, @pointer)
         block
       end
 
       # Removes a previously registered listener added with `#on_{{name}}`.
       # The *proc* argument should be the return value of the `#on_{{name}}` method.
       def remove_{{name}}_listener(listener : {{type}} ->) : Nil
-        user_data.{{name}}.remove_listener(listener, @pointer)
+        user_data.%topic.remove_listener(listener, @pointer)
       end
 
       private struct {{name.camelcase}}Topic < Topic({{type}})
@@ -36,12 +36,12 @@ module Espresso
           return unless pointer # No user data, no listeners.
 
           user_data = Box(UserData).unbox(pointer)
-          user_data.{{name}}.call { {{type}}.new(*args) }
+          user_data.%topic.call { {{type}}.new(*args) }
         end
       end
 
       class UserData
-        getter {{name}} = {{name.camelcase}}Topic.new
+        getter %topic = {{name.camelcase}}Topic.new
       end
     end
 
