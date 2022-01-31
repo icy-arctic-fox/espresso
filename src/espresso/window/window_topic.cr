@@ -4,7 +4,7 @@ module Espresso
       {% name = decl.var
          type = decl.type.resolve %}
 
-      struct {{name.camelcase}}Topic < InstanceTopic({{type}})
+      private struct {{name.camelcase}}Topic < InstanceTopic({{type}})
         include ErrorHandling
 
         private def register_callback(window)
