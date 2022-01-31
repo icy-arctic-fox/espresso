@@ -1,8 +1,4 @@
-require "./key"
-require "./key_state"
-require "./keyboard"
 require "./keyboard_event"
-require "./modifier_key"
 
 module Espresso
   # Event triggered when a physical keyboard key is pressed or released.

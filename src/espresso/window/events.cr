@@ -1,49 +1,9 @@
-require "./events/**"
+require "../events/**"
+require "./window_topic"
 
 module Espresso
   struct Window
-    private macro def_event(func, decl)
-      {% name = decl.var
-         type = decl.type.resolve %}
-
-      def on_{{name}}(&block : {{type}} ->)
-        user_data.%topic.add_listener(block, @pointer)
-        block
-      end
-
-      # Removes a previously registered listener added with `#on_{{name}}`.
-      # The *proc* argument should be the return value of the `#on_{{name}}` method.
-      def remove_{{name}}_listener(listener : {{type}} ->) : Nil
-        user_data.%topic.remove_listener(listener, @pointer)
-      end
-
-      private struct {{name.camelcase}}Topic < Topic({{type}})
-        include ErrorHandling
-
-        private def register_callback(*args)
-          window_pointer = args[0]
-          checked { LibGLFW.{{func.id}}(window_pointer, ->{{name.camelcase}}Topic.call) }
-        end
-
-        private def unregister_callback(*args)
-          window_pointer = args[0]
-          checked { LibGLFW.{{func.id}}(window_pointer, nil) }
-        end
-
-        protected def self.call(*args)
-          window_pointer = args[0]
-          pointer = expect_truthy { LibGLFW.get_window_user_pointer(window_pointer) }
-          return unless pointer # No user data, no listeners.
-
-          user_data = Box(UserData).unbox(pointer)
-          user_data.%topic.call { {{type}}.new(*args) }
-        end
-      end
-
-      class UserData
-        getter %topic = {{name.camelcase}}Topic.new
-      end
-    end
+    include WindowTopic
 
     # Registers a listener to respond when the window is moved.
     # The block of code passed to this method will be invoked when the event occurs.
@@ -53,14 +13,14 @@ module Espresso
     #
     # **Wayland:** This callback will never be called,
     # as there is no way for an application to know its global position.
-    def_event set_window_pos_callback, move : WindowMoveEvent
+    window_event window_move, move : WindowMoveEvent
 
     # Registers a listener to respond when the window's size changes.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowResizeEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_resize_listener` with the proc returned by this method.
-    def_event set_window_size_callback, resize : WindowResizeEvent
+    window_event window_resize, resize : WindowResizeEvent
 
     # Registers a listener to respond when the user requests the window to be closed.
     # The block of code passed to this method will be invoked when the event occurs.
@@ -72,7 +32,7 @@ module Espresso
     # but you can modify it at any time with `#closing=`.
     #
     # **macOS:** Selecting Quit from the application menu will trigger the close callback for all windows.
-    def_event set_window_close_callback, closing : WindowClosingEvent
+    window_event window_closing, closing : WindowClosingEvent
 
     # Registers a listener to respond when the window's contents need to be redrawn,
     # for example if the window has been exposed after having been covered by another window.
@@ -85,7 +45,7 @@ module Espresso
     # A `WindowRefreshEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_refresh_listener` with the proc returned by this method.
-    def_event set_window_refresh_callback, refresh : WindowRefreshEvent
+    window_event window_refresh, refresh : WindowRefreshEvent
 
     # Registers a listener to respond when the window gains or loses focus.
     #
@@ -97,35 +57,35 @@ module Espresso
     # A `WindowFocusEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_focus_listener` with the proc returned by this method.
-    def_event set_window_focus_callback, focus : WindowFocusEvent
+    window_event window_focus, focus : WindowFocusEvent
 
     # Registers a listener to respond when the window is iconified (minimized) or restored from being iconified.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowIconifyEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_iconify_listener` with the proc returned by this method.
-    def_event set_window_iconify_callback, iconify : WindowIconifyEvent
+    window_event window_iconify, iconify : WindowIconifyEvent
 
     # Registers a listener to respond when the window is maximized or restored from being maximized.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowMaximizeEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_maximize_listener` with the proc returned by this method.
-    def_event set_window_maximize_callback, maximize : WindowMaximizeEvent
+    window_event resize_maximize, maximize : WindowMaximizeEvent
 
     # Registers a listener to respond when the window's framebuffer is resized.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowResizeEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_framebuffer_resize_listener` with the proc returned by this method.
-    def_event set_framebuffer_size_callback, framebuffer_resize : WindowResizeEvent
+    window_event window_framebuffer_resize, framebuffer_resize : WindowResizeEvent
 
     # Registers a listener to respond when the window's content scaling changes.
     # The block of code passed to this method will be invoked when the event occurs.
     # A `WindowScaleEvent` instance will be passed to the block as an argument,
     # which contains all relevant information about the event.
     # To remove the listener, call `#remove_scale_listener` with the proc returned by this method.
-    def_event set_window_content_scale_callback, scale : WindowScaleEvent
+    window_event window_scale, scale : WindowScaleEvent
 
     # Registers a listener to respond when when one or more dragged files are dropped on the window.
     # The block of code passed to this method will be invoked when the event occurs.
@@ -134,7 +94,7 @@ module Espresso
     # To remove the listener, call `#remove_drop_listener` with the proc returned by this method.
     #
     # **Wayland:** File drop is currently unimplemented.
-    def_event set_drop_callback, drop : WindowDropEvent
+    window_event window_drop, drop : WindowDropEvent
 
     # Registers a listener to respond when the window is iconified (minimized) or restored from being iconified.
     # The block of code passed to this method will be invoked when the event occurs.

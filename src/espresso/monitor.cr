@@ -1,9 +1,5 @@
-require "./bounds"
 require "./error_handling"
-require "./errors/invalid_value_error"
-require "./position"
-require "./scale"
-require "./size"
+require "./monitor/**"
 
 module Espresso
   # Reference to a display or screen and information about it.
@@ -13,39 +9,7 @@ module Espresso
   struct Monitor
     include ErrorHandling
 
-    # Data stored alongside a monitor instance.
-    #
-    # Used to store event listeners and pass-through a user pointer.
-    private class UserData
-      # Pins all user data instances in static memory to prevent garbage collection.
-      protected class_getter instances = [] of self
-
-      # Creates user data for a monitor.
-      # Adds the user data to the pinned instances.
-      def initialize
-        self.class.instances << self
-      end
-
-      # Custom data the end-user can attach to a monitor instance.
-      property pointer = Pointer(Void).null
-    end
-
-    # Data stored alongside the monitor instance in GLFW as the user pointer.
-    protected getter user_data do
-      # Retrieve the monitor's user pointer.
-      pointer = checked { LibGLFW.get_monitor_user_pointer(@pointer) }
-      # If it references something (the user data)...
-      if pointer
-        # Unbox it.
-        Box(UserData).unbox(pointer)
-      else
-        # Otherwise, create new user data and set it.
-        UserData.new.tap do |user_data|
-          box = Box.box(user_data)
-          checked { LibGLFW.set_monitor_user_pointer(@pointer, box) }
-        end
-      end
-    end
+    MonitorUserData.def_getter
 
     # Constructs the monitor reference with a *pointer* from GLFW.
     protected def initialize(@pointer : LibGLFW::Monitor, @user_data : UserData? = nil)
@@ -56,7 +20,7 @@ module Espresso
     protected def destroy!
       return unless user_data = @user_data
 
-      UserData.instances.delete(user_data)
+      MonitorUserData.instances.delete(user_data)
     end
 
     # Attempts to retrieve the user's primary monitor.
@@ -271,5 +235,3 @@ module Espresso
     end
   end
 end
-
-require "./monitor/**"

@@ -1,9 +1,12 @@
-require "../image"
+require "../../error_handling"
+require "../../image"
 require "./cursor_shape"
 
 module Espresso
   # Custom or standard cursor to display the mouse's location in a window.
   struct Cursor
+    include ErrorHandling
+
     # Creates a new custom cursor from an image.
     #
     # Specify the cursor's appearance with the *image* argument.

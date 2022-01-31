@@ -1,6 +1,3 @@
-require "./button_state"
-require "./modifier_key"
-require "./mouse_button"
 require "./mouse_event"
 
 module Espresso

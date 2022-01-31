@@ -1,4 +1,4 @@
-require "../window/events/window_event"
+require "./window_event"
 
 module Espresso
   # Event involving the keyboard.

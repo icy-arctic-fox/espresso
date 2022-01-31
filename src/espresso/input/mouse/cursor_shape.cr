@@ -1,4 +1,4 @@
-require "../enum_copy"
+require "../../enum_copy"
 
 module Espresso
   include EnumCopy

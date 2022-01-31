@@ -1,5 +1,5 @@
 require "../error_handling"
-require "./button_state"
+require "./joystick/**"
 
 module Espresso
   # Exposes connected joysticks and controllers, with both referred to as joysticks.
@@ -22,39 +22,7 @@ module Espresso
   struct Joystick
     include ErrorHandling
 
-    # Data stored alongside a joystick instance.
-    #
-    # Used to store event listeners and pass-through a user pointer.
-    private class UserData
-      # Pins all user data instances in static memory to prevent garbage collection.
-      protected class_getter instances = [] of self
-
-      # Creates user data for a joystick.
-      # Adds the user data to the pinned instances.
-      def initialize
-        self.class.instances << self
-      end
-
-      # Custom data the end-user can attach to a joystick instance.
-      property pointer = Pointer(Void).null
-    end
-
-    # Data stored alongside the joystick instance in GLFW as the user pointer.
-    protected getter user_data do
-      # Retrieve the joystick's user pointer.
-      pointer = checked { LibGLFW.get_joystick_user_pointer(@id) }
-      # If it references something (the user data)...
-      if pointer
-        # Unbox it.
-        Box(UserData).unbox(pointer)
-      else
-        # Otherwise, create new user data and set it.
-        UserData.new.tap do |user_data|
-          box = Box.box(user_data)
-          checked { LibGLFW.set_joystick_user_pointer(@id, box) }
-        end
-      end
-    end
+    JoystickUserData.def_getter
 
     # Creates a reference to a joystick with the specified ID.
     protected def initialize(@id : LibGLFW::Joystick, @user_data : UserData? = nil)
@@ -65,7 +33,7 @@ module Espresso
     protected def destroy!
       return unless user_data = @user_data
 
-      UserData.instances.delete(user_data)
+      JoystickUserData.instances.delete(user_data)
     end
 
     # Returns all possible joysticks, connected and disconnected.
@@ -345,5 +313,3 @@ module Espresso
     end
   end
 end
-
-require "./joystick/**"

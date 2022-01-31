@@ -1,4 +1,3 @@
-require "../coordinates"
 require "./mouse_event"
 
 module Espresso
