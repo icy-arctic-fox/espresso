@@ -181,11 +181,11 @@ Listeners can be set up for disconnect of all monitors and joysticks, or just on
 
 ```crystal
 Espresso::Monitor.on_connect do |monitor|
-  # New monitor connected.
-end
-
-Espresso::Monitor.on_disconnect do |monitor|
-  # Monitor disconnected.
+  if event.connected?
+    # New monitor connected.
+  else
+    # Monitor disconnected.
+  end
 end
 
 # The instance-specific variant.
