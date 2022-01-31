@@ -315,7 +315,7 @@ module Espresso
     # the window will thus inherit the one defined in the application's desktop file.
     # This method always raises `PlatformError`.
     def icon=(images)
-      icon = images.map(&.to_unsafe)
+      icon = images.map &.to_unsafe
       checked { LibGLFW.set_window_icon(@pointer, icon.size, icon) }
     end
 

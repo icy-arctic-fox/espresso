@@ -24,9 +24,9 @@ module Espresso
       ramp = pointer.value
       size = ramp.size.to_i
       # Copy contents of arrays since they may be invalidated when the monitor disconnects.
-      @red = Slice(UInt16).new(size).tap(&.copy_from(ramp.red, size))
-      @green = Slice(UInt16).new(size).tap(&.copy_from(ramp.green, size))
-      @blue = Slice(UInt16).new(size).tap(&.copy_from(ramp.blue, size))
+      @red = Slice(UInt16).new(size).tap &.copy_from(ramp.red, size)
+      @green = Slice(UInt16).new(size).tap &.copy_from(ramp.green, size)
+      @blue = Slice(UInt16).new(size).tap &.copy_from(ramp.blue, size)
     end
 
     # Number of elements in each channel's array.

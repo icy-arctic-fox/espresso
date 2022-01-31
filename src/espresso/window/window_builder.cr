@@ -190,8 +190,8 @@ module Espresso
       # Reset hints to their defaults.
       # Then apply all of the specified hints.
       reset_hints
-      @hints.each(&.apply)
-      @string_hints.each(&.apply)
+      @hints.each &.apply
+      @string_hints.each &.apply
 
       yield
     ensure

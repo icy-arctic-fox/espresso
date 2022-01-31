@@ -55,7 +55,7 @@ module Espresso
 
     # Returns a list of all connected joysticks.
     def self.connected : Enumerable(Joystick)
-      all.select(&.connected?)
+      all.select &.connected?
     end
 
     # Iterates through all connected joysticks.
