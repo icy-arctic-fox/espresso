@@ -55,7 +55,7 @@ module Espresso
       def {{name}}=({{name}} : {{type}})
         {% if type >= Bool %}
           value = LibGLFW::Bool.new({{name}})
-          @hints << Hint.new({{hint}}, value)
+          @hints << Hint.new({{hint}}, value.to_i)
         {% elsif type >= String %}
           @string_hints << StringHint.new({{hint}}, {{name}})
         {% else %}
