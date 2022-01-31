@@ -3,6 +3,8 @@ require "./error_handling"
 module Espresso
   # High-resolution time input.
   class Timer
+    include ErrorHandling
+
     @accum = 0_u64
     @start = 0_u64
 

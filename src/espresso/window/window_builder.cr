@@ -1,10 +1,4 @@
-require "../client_api"
-require "../context_creation_api"
-require "../context_robustness"
 require "../error_handling"
-require "../opengl_profile"
-require "../release_behavior"
-require "../window"
 
 module Espresso
   # Simplifies creation of windows with the numerous options (hints) available.

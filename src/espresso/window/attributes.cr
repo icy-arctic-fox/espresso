@@ -1,3 +1,8 @@
+require "../client_api"
+require "../context_creation_api"
+require "../context_robustness"
+require "../opengl_profile"
+
 module Espresso
   struct Window
     # Defines a getter method for a window attribute.

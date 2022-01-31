@@ -1,5 +1,3 @@
-require "../size"
-
 module Espresso
   # Information about the size, color depth, and refresh rate of a monitor.
   struct VideoMode
