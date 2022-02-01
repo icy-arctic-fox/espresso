@@ -9,7 +9,7 @@ Provides an OOP and "Crystal-like" interface to GLFW.
 
 ```yaml
 dependencies:
-  expresso:
+  espresso:
     gitlab: arctic-fox/espresso
 ```
 
