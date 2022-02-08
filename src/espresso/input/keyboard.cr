@@ -41,8 +41,8 @@ module Espresso
     # The modifier key bit masks are not key tokens and cannot be used with this method.
     #
     # **Do not use this method** to implement text input.
-    def key(key) : KeyState
-      value = expect_truthy { LibGLFW.get_key(@pointer, key) }
+    def key(key : Key) : KeyState
+      value = expect_truthy { LibGLFW.get_key(@pointer, LibGLFW::Key.from_value(key.value)) }
       KeyState.new(value.to_i)
     end
 
@@ -51,7 +51,7 @@ module Espresso
     # If the `#sticky?` input mode is enabled,
     # this method returns true the first time you call it for a key that was pressed,
     # even if that key has already been released.
-    def key?(key)
+    def key?(key : Key)
       self.key(key).pressed?
     end
 
