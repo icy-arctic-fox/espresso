@@ -173,7 +173,7 @@ module Espresso
     #
     # Returns a string if a name is available for the specified *scancode*, nil otherwise.
     def self.key_name?(scancode)
-      key_name?(Key::Unknown, scancode)
+      key_name?(:unknown, scancode)
     end
 
     # Retrieves the name of the specified printable key, encoded as UTF-8.
