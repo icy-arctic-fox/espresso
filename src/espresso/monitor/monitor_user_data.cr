@@ -19,8 +19,8 @@ module Espresso
         else
           # Otherwise, create new user data and set it.
           MonitorUserData.new.tap do |user_data|
-            box = Box.box(user_data)
-            checked { LibGLFW.set_monitor_user_pointer(self, box) }
+            pointer = Box.box(user_data)
+            checked { LibGLFW.set_monitor_user_pointer(self, pointer) }
           end
         end
       end
