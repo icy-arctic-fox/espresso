@@ -6,7 +6,7 @@ module Espresso
   # Operates as a proxy between GLFW bindings and Espresso types.
   private abstract struct InstanceTopic(EventType) < Topic(EventType)
     # Subscribes a listener to the topic.
-    # *instance* is the object to dettach the listener to.
+    # *instance* is the object to detach the listener to.
     def add_listener(instance, listener : EventType ->) : Nil
       @listeners << listener
       register_callback(instance) if @listeners.size == 1 # Register on first listener.
