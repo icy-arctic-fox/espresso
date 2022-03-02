@@ -186,7 +186,7 @@ module Espresso
     # This behavior allows you to always pass in the arguments from the `#on_key` callback without modification.
     protected def self.key_name?(key : Key, scancode)
       chars = expect_truthy { LibGLFW.get_key_name(key.native, scancode) }
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Retrieves the platform-specific scancode of the specified key.

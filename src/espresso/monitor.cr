@@ -27,7 +27,7 @@ module Espresso
     # If there's no monitors, then this returns nil.
     def self.primary? : Monitor?
       pointer = expect_truthy { LibGLFW.get_primary_monitor }
-      pointer ? new(pointer) : nil
+      new(pointer) if pointer
     end
 
     # Retrieves the user's primary monitor.

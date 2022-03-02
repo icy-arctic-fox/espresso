@@ -759,7 +759,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def clipboard? : String?
       chars = LibGLFW.get_clipboard_string(@pointer)
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Sets the contents of the system clipboard,
@@ -792,12 +792,12 @@ module Espresso
     # Retrieves the contents of the system clipboard,
     # if it contains or is convertible to a UTF-8 encoded string.
     # If the clipboard is empty or if its contents cannot be converted,
-    # nil is returned..
+    # nil is returned.
     #
     # Possible errors that could be raised are: `NotInitializedError` and `PlatformError`.
     def self.clipboard? : String?
       chars = LibGLFW.get_clipboard_string(nil)
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Attempts to retrieve the monitor the full screen window is using.
@@ -806,7 +806,7 @@ module Espresso
     # Possible errors that could be raised are: `NotInitializedError`.
     def monitor? : Monitor?
       pointer = expect_truthy { LibGLFW.get_window_monitor(@pointer) }
-      pointer ? Monitor.new(pointer) : nil
+      Monitor.new(pointer) if pointer
     end
 
     # Retrieves the monitor the full screen window is using.
@@ -998,7 +998,7 @@ module Espresso
     # See also: `#current!`
     def self.current? : Window?
       pointer = expect_truthy { LibGLFW.get_current_context }
-      pointer ? Window.new(pointer) : nil
+      Window.new(pointer) if pointer
     end
 
     # Returns the window whose OpenGL or OpenGL ES context is current on the calling thread.
