@@ -153,7 +153,7 @@ module Espresso
     #
     # Returns a string if a name is available for the specified *key*, nil otherwise.
     def self.key_name?(key : Key)
-      raise ArgumentError.new("Key must be known") if key == Key::Unknown
+      raise ArgumentError.new("Key must be known") if key.unknown?
 
       key_name?(key, 0)
     end

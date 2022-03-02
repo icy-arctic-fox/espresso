@@ -44,7 +44,7 @@ module Espresso
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
     def left : ButtonState
-      button(MouseButton::Left)
+      button(:left)
     end
 
     # Determines whether the last state reported for the left (primary) mouse button is pressed.
@@ -64,7 +64,7 @@ module Espresso
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
     def right : ButtonState
-      button(MouseButton::Right)
+      button(:right)
     end
 
     # Determines whether the last state reported for the right (secondary) mouse button is pressed.
@@ -84,7 +84,7 @@ module Espresso
     # for a mouse button that was pressed,
     # even if that mouse button has already been released.
     def middle : ButtonState
-      button(MouseButton::Middle)
+      button(:middle)
     end
 
     # Determines whether the last state reported for the middle mouse button is pressed.
