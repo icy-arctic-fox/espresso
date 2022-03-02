@@ -12,7 +12,7 @@ module Espresso
       self.class.instances << self
     end
 
-    # Custom data the end-user can attach to a window instance.
+    # Custom data the end-user can attach to an instance.
     property pointer : Void* = Pointer(Void).null
   end
 end
