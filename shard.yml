@@ -17,7 +17,7 @@ development_dependencies:
     branch: gl-3.3-core
   ameba:
     github: crystal-ameba/ameba
-    version: ~> 0.14.1
+    version: ~> 1.0.0
 
 dependencies:
   glfw:
