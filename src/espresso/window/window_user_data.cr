@@ -28,8 +28,8 @@ module Espresso
         else
           # Otherwise, create new user data and set it.
           WindowUserData.new.tap do |user_data|
-            box = Box.box(user_data)
-            checked { LibGLFW.set_window_user_pointer(self, box) }
+            pointer = Box.box(user_data)
+            checked { LibGLFW.set_window_user_pointer(self, pointer) }
           end
         end
       end

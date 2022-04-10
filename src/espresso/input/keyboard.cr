@@ -41,8 +41,8 @@ module Espresso
     # The modifier key bit masks are not key tokens and cannot be used with this method.
     #
     # **Do not use this method** to implement text input.
-    def key(key) : KeyState
-      value = expect_truthy { LibGLFW.get_key(@pointer, key) }
+    def key(key : Key) : KeyState
+      value = expect_truthy { LibGLFW.get_key(@pointer, LibGLFW::Key.from_value(key.value)) }
       KeyState.new(value.to_i)
     end
 
@@ -51,7 +51,7 @@ module Espresso
     # If the `#sticky?` input mode is enabled,
     # this method returns true the first time you call it for a key that was pressed,
     # even if that key has already been released.
-    def key?(key)
+    def key?(key : Key)
       self.key(key).pressed?
     end
 
@@ -153,7 +153,7 @@ module Espresso
     #
     # Returns a string if a name is available for the specified *key*, nil otherwise.
     def self.key_name?(key : Key)
-      raise ArgumentError.new("Key must be known") if key == Key::Unknown
+      raise ArgumentError.new("Key must be known") if key.unknown?
 
       key_name?(key, 0)
     end
@@ -173,7 +173,7 @@ module Espresso
     #
     # Returns a string if a name is available for the specified *scancode*, nil otherwise.
     def self.key_name?(scancode)
-      key_name?(Key::Unknown, scancode)
+      key_name?(:unknown, scancode)
     end
 
     # Retrieves the name of the specified printable key, encoded as UTF-8.
@@ -186,7 +186,7 @@ module Espresso
     # This behavior allows you to always pass in the arguments from the `#on_key` callback without modification.
     protected def self.key_name?(key : Key, scancode)
       chars = expect_truthy { LibGLFW.get_key_name(key.native, scancode) }
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Retrieves the platform-specific scancode of the specified key.

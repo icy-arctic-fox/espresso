@@ -88,7 +88,7 @@ module Espresso
     def axes? : Indexable(Float)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_axes(@id, pointerof(count)) }
-      pointer ? Slice.new(pointer, count) : nil
+      Slice.new(pointer, count) if pointer
     end
 
     # Retrieves the values of all axes of this joystick.
@@ -124,7 +124,7 @@ module Espresso
     def buttons? : Indexable(ButtonState)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_buttons(@id, pointerof(count)) }
-      pointer ? Slice.new(pointer, count).unsafe_as(Slice(ButtonState)) : nil
+      Slice.new(pointer, count).unsafe_as(Slice(ButtonState)) if pointer
     end
 
     # Retrieves the state of all buttons of this joystick.
@@ -162,7 +162,7 @@ module Espresso
     def hats? : Indexable(JoystickHatState)?
       count = uninitialized Int32
       pointer = expect_truthy { LibGLFW.get_joystick_hats(@id, pointerof(count)) }
-      pointer ? Slice.new(pointer, count).unsafe_as(Slice(JoystickHatState)) : nil
+      Slice.new(pointer, count).unsafe_as(Slice(JoystickHatState)) if pointer
     end
 
     # Retrieves the state of all hats of this joystick.
@@ -187,7 +187,7 @@ module Espresso
     # This can be used instead of first calling `#connected?`.
     def name? : String?
       chars = expect_truthy { LibGLFW.get_joystick_name(@id) }
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Retrieves the name, encoded as UTF-8, of this joystick.
@@ -215,7 +215,7 @@ module Espresso
     # depending on what hardware information the platform specific APIs provide.
     def guid? : String?
       chars = expect_truthy { LibGLFW.get_joystick_guid(@id) }
-      chars ? String.new(chars) : nil
+      String.new(chars) if chars
     end
 
     # Retrieves the SDL compatible GUID, as a UTF-8 encoded hexadecimal string, of this joystick.
@@ -274,7 +274,7 @@ module Espresso
     def state? : GamepadState?
       state = uninitialized LibGLFW::GamepadState
       result = expect_truthy { LibGLFW.get_gamepad_state(@id, pointerof(state)) }
-      result.to_bool ? GamepadState.new(state) : nil
+      GamepadState.new(state) if result.to_bool
     end
 
     # Retrieves the state of the specified joystick remapped to an Xbox-like gamepad.

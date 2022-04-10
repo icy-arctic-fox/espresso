@@ -9,7 +9,7 @@ module Espresso
     # Creates the mouse event.
     protected def initialize(pointer, entered)
       super(pointer)
-      @entered = int_to_bool(entered)
+      @entered = entered.to_bool
     end
 
     # Indicates whether the mouse left the window's content area.

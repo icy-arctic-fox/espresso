@@ -14,9 +14,9 @@ module Espresso
     # and raises an exception if one did.
     private def check_error
       code = LibGLFW.get_error(out description)
-      if code != LibGLFW::ErrorCode::NoError
-        raise translate_error(code, description)
-      end
+      return if code.no_error?
+
+      raise translate_error(code, description)
     end
 
     # Checks for errors from GLFW after a method has been called.
